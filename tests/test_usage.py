@@ -208,3 +208,40 @@ def test_a_strategy_dashboard_lowers_the_confidence(tmp_path):
         types={"a": set()}, uncertain={"map": "strategy"}
     )
     assert _verdict(found, dashboards).confidence == "medium"
+
+
+def test_the_dashboard_keys_are_collected():
+    """Without this the key-based detection silently finds nothing.
+
+    It did: the line collecting the keys was missing, so card-mod stayed
+    undetermined although five dashboards used it.
+    """
+    import asyncio
+
+    from custom_components.integrationguard.usage.plugins import (
+        LOVELACE_DATA,
+        async_read_dashboards,
+    )
+
+    class FakeDashboard:
+        mode = "storage"
+
+        async def async_load(self, force):
+            return {
+                "views": [
+                    {
+                        "cards": [
+                            {"type": "custom:button-card", "card_mod": {"style": "x"}}
+                        ]
+                    }
+                ]
+            }
+
+    class FakeHass:
+        def __init__(self, data):
+            self.data = data
+
+    lovelace = type("L", (), {"dashboards": {None: FakeDashboard()}})()
+    usage = asyncio.run(async_read_dashboards(FakeHass({LOVELACE_DATA: lovelace})))
+    assert usage.types["lovelace"] == {"button-card"}
+    assert "card_mod" in usage.keys

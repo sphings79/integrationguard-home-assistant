@@ -6,6 +6,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-08-29
+
+### Fixed
+
+- **The key-based usage detection added in 0.1.3 never ran.** The line that
+  collects the keys out of a dashboard was missing, so the set it matches
+  against was always empty. card-mod stayed "cannot be determined" although
+  five dashboards use it. There is a test for it now.
+
 ## [0.1.3] - 2026-08-29
 
 ### Fixed
@@ -98,7 +107,8 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.4
 [0.1.3]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.3
 [0.1.2]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.2
 [0.1.1]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.1

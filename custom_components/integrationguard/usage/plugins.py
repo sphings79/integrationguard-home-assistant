@@ -189,7 +189,9 @@ async def async_read_dashboards(hass: HomeAssistant) -> DashboardUsage:
             _LOGGER.warning("Could not read dashboard %s", name, exc_info=True)
             usage.uncertain[name] = "unreadable"
             continue
-        usage.types[name] = set(USED_TYPE.findall(_as_text(config)))
+        text = _as_text(config)
+        usage.types[name] = set(USED_TYPE.findall(text))
+        usage.keys.update(USED_KEY.findall(text))
         if _uses_strategy(config):
             # A strategy decides at render time what to show, so what is not in
             # the stored configuration may still end up on screen.
@@ -251,6 +253,7 @@ def is_registered(urls: list[str], directory: Path | None) -> bool:
 
 
 __all__ = [
+    "LOVELACE_DATA",
     "DashboardUsage",
     "PluginFiles",
     "async_read_dashboards",
