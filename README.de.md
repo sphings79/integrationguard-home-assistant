@@ -103,8 +103,9 @@ Vier Quellen, in dieser Reihenfolge:
 4. **Deine Installation** — Dashboards, Config-Entries, Reparaturmeldungen,
    Themes, das Konfigurationsverzeichnis.
 
-Alles liegt in `.storage`. Außer den beiden lesenden Anfragen oben verlässt
-nichts die Maschine.
+Alles liegt in `.storage`, auch das letzte Ergebnis — ein Neustart leert das
+Panel also nicht, und die Sensoren behalten ihre Werte bis zur nächsten
+Prüfung. Außer den beiden lesenden Anfragen oben verlässt nichts die Maschine.
 
 ## Wie ungenutzte Karten gefunden werden
 

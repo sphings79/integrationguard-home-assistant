@@ -6,6 +6,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-08-29
+
+### Fixed
+
+- **The result did not survive a restart.** Every sensor went to `unknown`
+  and the panel stood empty until the first scan afterwards, several minutes
+  later. The caches were persisted but the result itself was not. It is
+  stored now and restored on start, so everything is there immediately and
+  the timestamp says when that scan actually ran.
+
 ## [0.1.4] - 2026-08-29
 
 ### Fixed
@@ -107,7 +117,8 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.5
 [0.1.4]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.4
 [0.1.3]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.3
 [0.1.2]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.2

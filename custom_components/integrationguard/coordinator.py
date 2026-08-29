@@ -105,6 +105,16 @@ class IntegrationGuardCoordinator:
         self.runtime.restore(state.get("runtime"))
         self._previous = dict(state.get("previous") or {})
         self._announced = dict(state.get("announced") or {})
+        # Without this every sensor and the whole panel would be empty until
+        # the first scan after a restart, several minutes later.
+        self.result = ScanResult.from_state(state.get("result"))
+        if self.result is not None:
+            self._last_scan = self.result.finished.isoformat()
+            _LOGGER.debug(
+                "Restored the result of %s with %s repositories",
+                self._last_scan,
+                len(self.result.repositories),
+            )
 
         await self.history.async_setup()
         await self.history.async_purge(self.config.settings.history_retention_days)
@@ -517,6 +527,7 @@ class IntegrationGuardCoordinator:
                 "store_data": self.store_data.to_state(),
                 "github": self.github.to_state(),
                 "runtime": self.runtime.to_state(),
+                "result": self.result.to_state() if self.result else None,
                 "previous": self._previous,
                 "announced": self._announced,
                 "last_scan": self._last_scan,

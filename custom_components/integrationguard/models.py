@@ -266,6 +266,15 @@ class Finding:
         """Return the finding as plain data."""
         return asdict(self)
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Finding:
+        """Rebuild a finding from stored data."""
+        known = _known_only(cls, data)
+        known.setdefault("rule_id", "")
+        known.setdefault("severity_id", "")
+        known.setdefault("penalty", 0)
+        return cls(**known)
+
 
 @dataclass(slots=True)
 class RepairIssue:
@@ -380,6 +389,27 @@ class RepositoryInfo:
     # Which source last supplied data, as ISO timestamps.
     data_sources: dict[str, str] = field(default_factory=dict)
 
+    def to_state(self) -> dict[str, Any]:
+        """Return the facts in a form the state store can hold."""
+        data = asdict(self)
+        for field_name in ("last_push", "last_release_at"):
+            value = data[field_name]
+            data[field_name] = value.isoformat() if value else None
+        return data
+
+    @classmethod
+    def from_state(cls, data: dict[str, Any]) -> RepositoryInfo:
+        """Rebuild the facts written by a previous run."""
+        known = _known_only(cls, data)
+        known.setdefault("full_name", "")
+        known.setdefault("category", "")
+        for field_name in ("last_push", "last_release_at"):
+            raw = known.get(field_name)
+            known[field_name] = (
+                datetime.fromisoformat(raw) if isinstance(raw, str) and raw else None
+            )
+        return cls(**known)
+
     @property
     def key(self) -> str:
         """Return the identifier everything else keys on.
@@ -439,6 +469,37 @@ class RepositoryHealth:
     def key(self) -> str:
         """Return the identifier everything else keys on."""
         return self.info.key
+
+    def to_state(self) -> dict[str, Any]:
+        """Return the verdict in a form the state store can hold.
+
+        Deliberately not to_dict(): that one adds the derived links for the
+        browser, which do not need storing.
+        """
+        return {
+            "info": self.info.to_state(),
+            "findings": [f.to_dict() for f in self.findings],
+            "score": self.score,
+            "status": self.status,
+            "usage": self.usage,
+            "usage_confidence": self.usage_confidence,
+            "usage_detail": self.usage_detail,
+            "ignored": self.ignored,
+        }
+
+    @classmethod
+    def from_state(cls, data: dict[str, Any]) -> RepositoryHealth:
+        """Rebuild a verdict written by a previous run."""
+        return cls(
+            info=RepositoryInfo.from_state(data.get("info") or {}),
+            findings=[Finding.from_dict(f) for f in data.get("findings") or []],
+            score=int(data.get("score", 100)),
+            status=str(data.get("status", Status.HEALTHY)),
+            usage=str(data.get("usage", Usage.NOT_CHECKED)),
+            usage_confidence=data.get("usage_confidence"),
+            usage_detail=dict(data.get("usage_detail") or {}),
+            ignored=bool(data.get("ignored")),
+        )
 
     def to_dict(self) -> dict[str, Any]:
         """Return the verdict as plain data for the panel and the sensors."""
@@ -500,6 +561,44 @@ class ScanResult:
     source_errors: dict[str, str] = field(default_factory=dict)
     github_remaining: int | None = None
     github_pending: int = 0
+
+    def to_state(self) -> dict[str, Any]:
+        """Return the whole result in a form the state store can hold.
+
+        Without this the panel and every sensor would be empty until the
+        first scan after a restart.
+        """
+        return {
+            "started": self.started.isoformat(),
+            "finished": self.finished.isoformat(),
+            "repositories": [r.to_state() for r in self.repositories],
+            "orphans": self.orphans,
+            "source_errors": self.source_errors,
+            "github_remaining": self.github_remaining,
+            "github_pending": self.github_pending,
+        }
+
+    @classmethod
+    def from_state(cls, data: dict[str, Any] | None) -> ScanResult | None:
+        """Rebuild the result of the run before the restart."""
+        if not data or not data.get("finished"):
+            return None
+        try:
+            started = datetime.fromisoformat(data["started"])
+            finished = datetime.fromisoformat(data["finished"])
+        except (KeyError, TypeError, ValueError):
+            return None
+        return cls(
+            started=started,
+            finished=finished,
+            repositories=[
+                RepositoryHealth.from_state(r) for r in data.get("repositories") or []
+            ],
+            orphans=list(data.get("orphans") or []),
+            source_errors=dict(data.get("source_errors") or {}),
+            github_remaining=data.get("github_remaining"),
+            github_pending=int(data.get("github_pending") or 0),
+        )
 
     @property
     def duration(self) -> float:

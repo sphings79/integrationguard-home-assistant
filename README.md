@@ -100,8 +100,9 @@ Four sources, in this order:
 4. **Your installation** — dashboards, config entries, repairs, themes, the
    configuration directory.
 
-Everything is stored in `.storage`. Nothing leaves the machine except the two
-read-only requests above.
+Everything is stored in `.storage`, the last result included — a restart does
+not empty the panel and the sensors keep their values until the next scan.
+Nothing leaves the machine except the two read-only requests above.
 
 ## How unused cards are found
 
