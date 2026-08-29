@@ -8,7 +8,7 @@
           "github_token": "Token GitHubu"
         },
         "data_description": {
-          "github_token": "Osobní přístupový token s právem čtení veřejných repozitářů. Nech prázdné, chceš-li pracovat bez něj."
+          "github_token": "Osobní přístupový token. Nepotřebuje žádné oprávnění — každý token může číst veřejné repozitáře. Nech prázdné, chceš-li pracovat bez něj."
         }
       }
     },

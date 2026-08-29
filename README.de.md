@@ -176,8 +176,8 @@ Alles andere steht im **IntegrationGuard**-Panel in der Seitenleiste.
 | Verlauf aufbewahren | 365 Tage | Aufbewahrung der Änderungshistorie |
 
 Ein GitHub-Token legst du unter **Settings → Developer settings → Personal
-access tokens** an. Ein feingranulares Token mit Lesezugriff auf öffentliche
-Repositories reicht, mehr wird nicht verwendet.
+access tokens** an. Das Token braucht **überhaupt keine Berechtigung** — GitHub gibt jedem
+Token Lesezugriff auf öffentliche Repositories. Kreuze nichts an.
 
 ## Die Regeln
 

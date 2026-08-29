@@ -8,7 +8,7 @@
           "github_token": "GitHub-token"
         },
         "data_description": {
-          "github_token": "En personlig åtkomsttoken med läsåtkomst till publika förråd. Lämna tomt för att arbeta utan."
+          "github_token": "En personlig åtkomsttoken. Den behöver inga behörigheter — varje token får läsa publika förråd. Lämna tomt för att arbeta utan."
         }
       }
     },

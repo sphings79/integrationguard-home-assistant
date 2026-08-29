@@ -8,7 +8,7 @@
           "github_token": "GitHub-token"
         },
         "data_description": {
-          "github_token": "Een persoonlijk toegangstoken met leestoegang tot openbare repositories. Laat leeg om zonder te werken."
+          "github_token": "Een persoonlijk toegangstoken. Het heeft geen rechten nodig — elke token mag openbare repositories lezen. Laat leeg om zonder te werken."
         }
       }
     },

@@ -8,7 +8,7 @@
           "github_token": "Token GitHub"
         },
         "data_description": {
-          "github_token": "Un token di accesso personale con accesso in lettura ai repository pubblici. Lascia vuoto per lavorare senza."
+          "github_token": "Un token di accesso personale. Non serve alcun permesso — qualsiasi token può leggere i repository pubblici. Lascia vuoto per lavorare senza."
         }
       }
     },

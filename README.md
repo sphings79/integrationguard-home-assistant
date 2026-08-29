@@ -172,8 +172,8 @@ lives in the **IntegrationGuard** panel in the sidebar.
 | Keep history for | 365 days | Retention of the change log |
 
 A GitHub token is created under **Settings → Developer settings → Personal access
-tokens**. A fine-grained token with read access to public repositories is enough;
-no scope beyond that is used.
+tokens**. The token needs **no permissions at all** — GitHub grants every token
+read-only access to public repositories. Do not tick anything.
 
 ## The rules
 

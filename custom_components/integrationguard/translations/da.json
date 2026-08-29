@@ -8,7 +8,7 @@
           "github_token": "GitHub-token"
         },
         "data_description": {
-          "github_token": "En personlig adgangstoken med læseadgang til offentlige arkiver. Lad stå tomt for at arbejde uden."
+          "github_token": "En personlig adgangstoken. Den behøver ingen tilladelser — enhver token må læse offentlige arkiver. Lad stå tomt for at arbejde uden."
         }
       }
     },

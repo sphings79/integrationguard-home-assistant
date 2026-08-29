@@ -227,7 +227,7 @@ export const it: Record<string, string> = {
   "settings.scan_time_hint": "Con 24 ore è l'orario giornaliero. Con sei ore il controllo parte a quell'ora e poi ogni sei ore.",
   "settings.github": "GitHub",
   "settings.github_token": "Token GitHub",
-  "settings.github_token_hint": "Facoltativo. Senza token GitHub consente 60 richieste all'ora, con token 5000. Basta l'accesso in lettura ai repository pubblici.",
+  "settings.github_token_hint": "Facoltativo. Senza token GitHub consente 60 richieste all'ora, con token 5000. Non serve alcun permesso — qualsiasi token può leggere i repository pubblici.",
   "settings.github_token_set": "Un token è salvato.",
   "settings.categories": "Cosa viene controllato",
   "settings.categories_health": "Controlla lo stato di",

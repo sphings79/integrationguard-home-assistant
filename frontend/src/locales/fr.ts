@@ -227,7 +227,7 @@ export const fr: Record<string, string> = {
   "settings.scan_time_hint": "Avec un intervalle de 24 heures, c'est l'heure quotidienne. Avec six heures, l'analyse tourne à cette heure puis toutes les six heures.",
   "settings.github": "GitHub",
   "settings.github_token": "Jeton GitHub",
-  "settings.github_token_hint": "Facultatif. Sans jeton GitHub autorise 60 requêtes par heure, avec 5000. Un accès en lecture aux dépôts publics suffit.",
+  "settings.github_token_hint": "Facultatif. Sans jeton GitHub autorise 60 requêtes par heure, avec 5000. Il n'a besoin d'aucune permission — tout jeton peut lire les dépôts publics.",
   "settings.github_token_set": "Un jeton est enregistré.",
   "settings.categories": "Ce qui est vérifié",
   "settings.categories_health": "Vérifier l'état de",

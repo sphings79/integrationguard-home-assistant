@@ -8,7 +8,7 @@
           "github_token": "Jeton GitHub"
         },
         "data_description": {
-          "github_token": "Un jeton d'accès personnel avec accès en lecture aux dépôts publics. Laissez vide pour travailler sans."
+          "github_token": "Un jeton d'accès personnel. Il n'a besoin d'aucune permission — tout jeton peut lire les dépôts publics. Laissez vide pour travailler sans."
         }
       }
     },

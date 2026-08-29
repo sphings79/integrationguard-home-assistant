@@ -258,7 +258,7 @@ export const de: Record<string, string> = {
   "settings.github": "GitHub",
   "settings.github_token": "GitHub-Token",
   "settings.github_token_hint":
-    "Optional. Ohne Token erlaubt GitHub 60 Anfragen pro Stunde, mit Token 5000. Lesezugriff auf öffentliche Repositories genügt.",
+    "Optional. Ohne Token erlaubt GitHub 60 Anfragen pro Stunde, mit Token 5000. Es braucht überhaupt keine Berechtigung — jeder Token darf öffentliche Repositories lesen.",
   "settings.github_token_set": "Ein Token ist hinterlegt.",
   "settings.categories": "Was geprüft wird",
   "settings.categories_health": "Zustand prüfen bei",
