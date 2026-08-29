@@ -28,5 +28,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - run: pip install pytest pytest-asyncio awesomeversion
+      # The tests import through the integration package, and that pulls in
+      # Home Assistant. Cheaper to install it than to contort the imports.
+      - run: pip install pytest pytest-asyncio homeassistant
       - run: pytest -q
