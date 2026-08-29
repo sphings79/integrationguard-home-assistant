@@ -1,0 +1,52 @@
+{
+  "entity": {
+    "sensor": {
+      "score": {
+        "default": "mdi:heart-pulse"
+      },
+      "problems": {
+        "default": "mdi:alert-circle-outline"
+      },
+      "stale": {
+        "default": "mdi:clock-alert-outline"
+      },
+      "abandoned": {
+        "default": "mdi:grave-stone"
+      },
+      "unused": {
+        "default": "mdi:package-variant-closed-remove"
+      },
+      "repositories": {
+        "default": "mdi:package-variant"
+      },
+      "last_scan": {
+        "default": "mdi:calendar-clock"
+      },
+      "runtime_problems": {
+        "default": "mdi:cog-off-outline"
+      },
+      "repairs": {
+        "default": "mdi:wrench-outline"
+      }
+    },
+    "binary_sensor": {
+      "critical": {
+        "default": "mdi:shield-alert"
+      }
+    },
+    "switch": {
+      "monitoring": {
+        "default": "mdi:shield-search",
+        "state": {
+          "off": "mdi:shield-off-outline"
+        }
+      }
+    }
+  },
+  "services": {
+    "scan": "mdi:refresh",
+    "ignore": "mdi:bell-off-outline",
+    "unignore": "mdi:bell-outline",
+    "mark_used": "mdi:check-decagram-outline"
+  }
+}

@@ -1,0 +1,32 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # No floating v4 tag exists for this action, so the version is pinned.
+      - uses: astral-sh/ruff-action@v4.1.0
+        with:
+          args: format --check
+      - uses: astral-sh/ruff-action@v4.1.0
+        with:
+          args: check
+
+  pytest:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: pip install pytest pytest-asyncio awesomeversion
+      - run: pytest -q

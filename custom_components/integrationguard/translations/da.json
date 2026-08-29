@@ -1,0 +1,132 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IntegrationGuard",
+        "description": "En GitHub-token er valgfri. Uden token tillader GitHub 60 forespørgsler i timen — nok til en daglig kontrol, men langsomt første gang. Med token er det 5000.",
+        "data": {
+          "github_token": "GitHub-token"
+        },
+        "data_description": {
+          "github_token": "En personlig adgangstoken med læseadgang til offentlige arkiver. Lad stå tomt for at arbejde uden."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "IntegrationGuard er allerede sat op."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "GitHub-token",
+        "data": {
+          "github_token": "GitHub-token"
+        },
+        "data_description": {
+          "github_token": "Lad stå tomt for at arbejde uden token."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "score": {
+        "name": "Sundhedsscore"
+      },
+      "problems": {
+        "name": "Fund"
+      },
+      "stale": {
+        "name": "Forældede"
+      },
+      "abandoned": {
+        "name": "Forladte"
+      },
+      "unused": {
+        "name": "Ubrugte"
+      },
+      "repositories": {
+        "name": "Arkiver"
+      },
+      "runtime_problems": {
+        "name": "Driftsproblemer"
+      },
+      "repairs": {
+        "name": "Reparationsbeskeder"
+      },
+      "last_scan": {
+        "name": "Seneste kontrol"
+      }
+    },
+    "binary_sensor": {
+      "critical": {
+        "name": "Kritisk"
+      }
+    },
+    "switch": {
+      "monitoring": {
+        "name": "Overvågning"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Kontrollér nu",
+      "description": "Kontrollerer alle installerede arkiver med det samme i stedet for at vente på planen.",
+      "fields": {
+        "force": {
+          "name": "Gennemtving",
+          "description": "Henter hvert arkiv fra GitHub igen, også dem der er kontrolleret for nylig. Timegrænsen gælder stadig."
+        }
+      }
+    },
+    "ignore": {
+      "name": "Ignorér arkivet",
+      "description": "Melder ikke længere om et arkiv, om ønsket kun i en periode.",
+      "fields": {
+        "repository": {
+          "name": "Arkiv",
+          "description": "Betegnelsen fra panelet: owner/repo eller app:<slug> for en app."
+        },
+        "duration": {
+          "name": "Varighed",
+          "description": "Ignorér kun så længe. Lad stå tomt for at ignorere varigt."
+        },
+        "reason": {
+          "name": "Årsag",
+          "description": "En note til dig selv."
+        }
+      }
+    },
+    "unignore": {
+      "name": "Stop med at ignorere",
+      "description": "Melder om arkivet igen.",
+      "fields": {
+        "repository": {
+          "name": "Arkiv",
+          "description": "Betegnelsen fra panelet: owner/repo eller app:<slug> for en app."
+        }
+      }
+    },
+    "mark_used": {
+      "name": "Markér som brugt",
+      "description": "Overskriver brugsvurderingen i hånden, til ting der bruges på en måde konfigurationen ikke viser.",
+      "fields": {
+        "repository": {
+          "name": "Arkiv",
+          "description": "Betegnelsen fra panelet: owner/repo eller app:<slug> for en app."
+        },
+        "used": {
+          "name": "Brugt",
+          "description": "Til markerer som brugt, fra fjerner markeringen."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_repository": {
+      "message": "IntegrationGuard kender ikke noget arkiv ved navn {repository}."
+    }
+  }
+}

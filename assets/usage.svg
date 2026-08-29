@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="Usage detection in two directions: element names read out of the installed bundle, and the card types the dashboards ask for looked up inside that bundle. If neither direction finds anything, the verdict is cannot be determined rather than unused">
+  <style>
+    .bg { fill: #0f1720; }
+    .panel { fill: #16202b; stroke: #28394a; stroke-width: 1.5; }
+    .ok { fill: #16202b; stroke: #3ddc97; stroke-width: 2; }
+    .warn { fill: #16202b; stroke: #FFC107; stroke-width: 2; }
+    .grey { fill: #16202b; stroke: #9fb0c0; stroke-width: 2; }
+    .t { font: 600 17px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .s { font: 400 13.5px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #9fb0c0; }
+    .m { font: 400 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #9fb0c0; }
+    .cap { font: 600 14px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #41BDF5; letter-spacing: 1.2px; }
+    .arrow { stroke: #41BDF5; stroke-width: 2; fill: none; marker-end: url(#c); }
+    .arrow2 { stroke: #7C7CF5; stroke-width: 2; fill: none; marker-end: url(#d); }
+  </style>
+  <defs>
+    <marker id="c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#41BDF5"/>
+    </marker>
+    <marker id="d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7C7CF5"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="620" rx="18"/>
+
+  <g transform="translate(60 70)">
+    <rect class="panel" width="440" height="150" rx="12"/>
+    <text class="cap" x="24" y="36">THE INSTALLED BUNDLE</text>
+    <text class="m" x="24" y="68">www/community/lovelace-mushroom/mushroom.js</text>
+    <text class="m" x="24" y="94">customElements.define("…")</text>
+    <text class="m" x="24" y="118">window.customCards.push({ type: "…" })</text>
+  </g>
+  <g transform="translate(700 70)">
+    <rect class="panel" width="440" height="150" rx="12"/>
+    <text class="cap" x="24" y="36">EVERY DASHBOARD</text>
+    <text class="m" x="24" y="68">storage and YAML, all of them</text>
+    <text class="m" x="24" y="94">type: custom:mushroom-template-card</text>
+    <text class="m" x="24" y="118">card_mod and markdown count too</text>
+  </g>
+
+  <path class="arrow" d="M504 122 H690"/>
+  <text class="s" x="530" y="112">names read out →</text>
+  <path class="arrow2" d="M690 168 H504"/>
+  <text class="s" x="528" y="196">← looked up inside</text>
+
+  <text class="cap" x="60" y="290">WHAT COMES OUT</text>
+  <g transform="translate(60 310)">
+    <rect class="ok" width="345" height="118" rx="12"/>
+    <text class="t" x="24" y="42">In use</text>
+    <text class="s" x="24" y="70">A type from the bundle appears</text>
+    <text class="s" x="24" y="92">on a dashboard. Certain.</text>
+  </g>
+  <g transform="translate(427 310)">
+    <rect class="warn" width="345" height="118" rx="12"/>
+    <text class="t" x="24" y="42">Not used</text>
+    <text class="s" x="24" y="70">Types were found, none of them</text>
+    <text class="s" x="24" y="92">is used anywhere.</text>
+  </g>
+  <g transform="translate(794 310)">
+    <rect class="grey" width="346" height="118" rx="12"/>
+    <text class="t" x="24" y="42">Cannot be determined</text>
+    <text class="s" x="24" y="70">Nothing addressable came out of</text>
+    <text class="s" x="24" y="92">the bundle. No verdict given.</text>
+  </g>
+
+  <g transform="translate(60 462)">
+    <rect class="panel" width="1080" height="108" rx="12"/>
+    <text class="t" x="24" y="40">Why both directions</text>
+    <text class="s" x="24" y="68">Mushroom builds its card list from variables — reading the bundle finds a single badge name and misses every card.</text>
+    <text class="s" x="24" y="90">A card a dashboard addresses must carry its own name as a string somewhere inside, whatever it does with it.</text>
+  </g>
+</svg>

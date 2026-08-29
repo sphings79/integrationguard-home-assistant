@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="IntegrationGuard icon: a shield with a heartbeat line through it">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#41BDF5"/>
+      <stop offset="1" stop-color="#7C7CF5"/>
+    </linearGradient>
+  </defs>
+  <path d="M256 40 L432 108 v138 c0 108-74 182-176 226 C154 428 80 354 80 246 V108 Z"
+        fill="none" stroke="url(#g)" stroke-width="34" stroke-linejoin="round"/>
+  <path d="M132 262 h58 l34-74 46 148 36-96 26 22 h48"
+        fill="none" stroke="url(#g)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

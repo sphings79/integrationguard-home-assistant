@@ -1,0 +1,18 @@
+name: Idea
+description: Something IntegrationGuard should also look at.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What should it find
+      description: And how would you know it is right?
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Where would the data come from
+      description: >-
+        Optional. IntegrationGuard reads HACS, the public store index, GitHub
+        and your own installation — nothing else.

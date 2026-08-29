@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="1200" height="380" role="img" aria-label="Four installation steps: add the repository to HACS, download it, restart Home Assistant, then add the integration and open the panel">
+  <style>
+    .bg { fill: #0f1720; }
+    .panel { fill: #16202b; stroke: #28394a; stroke-width: 1.5; }
+    .n { font: 700 22px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #0f1720; }
+    .t { font: 600 17px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .s { font: 400 13.5px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #9fb0c0; }
+    .arrow { stroke: #28394a; stroke-width: 2; fill: none; marker-end: url(#b); }
+  </style>
+  <defs>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#28394a"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="380" rx="18"/>
+
+  <g transform="translate(48 96)">
+    <rect class="panel" width="252" height="190" rx="14"/>
+    <circle cx="40" cy="46" r="20" fill="#41BDF5"/>
+    <text class="n" x="40" y="54" text-anchor="middle">1</text>
+    <text class="t" x="24" y="102">Add to HACS</text>
+    <text class="s" x="24" y="128">HACS → three dots →</text>
+    <text class="s" x="24" y="148">Custom repositories,</text>
+    <text class="s" x="24" y="168">type Integration</text>
+  </g>
+  <path class="arrow" d="M308 191 H336"/>
+  <g transform="translate(344 96)">
+    <rect class="panel" width="252" height="190" rx="14"/>
+    <circle cx="40" cy="46" r="20" fill="#41BDF5"/>
+    <text class="n" x="40" y="54" text-anchor="middle">2</text>
+    <text class="t" x="24" y="102">Download</text>
+    <text class="s" x="24" y="128">Search for</text>
+    <text class="s" x="24" y="148">IntegrationGuard</text>
+    <text class="s" x="24" y="168">and download it</text>
+  </g>
+  <path class="arrow" d="M604 191 H632"/>
+  <g transform="translate(640 96)">
+    <rect class="panel" width="252" height="190" rx="14"/>
+    <circle cx="40" cy="46" r="20" fill="#41BDF5"/>
+    <text class="n" x="40" y="54" text-anchor="middle">3</text>
+    <text class="t" x="24" y="102">Restart</text>
+    <text class="s" x="24" y="128">Settings → System →</text>
+    <text class="s" x="24" y="148">the power icon →</text>
+    <text class="s" x="24" y="168">Restart Home Assistant</text>
+  </g>
+  <path class="arrow" d="M900 191 H928"/>
+  <g transform="translate(936 96)">
+    <rect class="panel" width="252" height="190" rx="14"/>
+    <circle cx="40" cy="46" r="20" fill="#3ddc97"/>
+    <text class="n" x="40" y="54" text-anchor="middle">4</text>
+    <text class="t" x="24" y="102">Add and open</text>
+    <text class="s" x="24" y="128">Devices &amp; services →</text>
+    <text class="s" x="24" y="148">Add integration, then</text>
+    <text class="s" x="24" y="168">the sidebar panel</text>
+  </g>
+</svg>

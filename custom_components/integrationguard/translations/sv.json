@@ -1,0 +1,132 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IntegrationGuard",
+        "description": "En GitHub-token är valfri. Utan token tillåter GitHub 60 förfrågningar i timmen — nog för en daglig kontroll, men långsamt första gången. Med token är det 5000.",
+        "data": {
+          "github_token": "GitHub-token"
+        },
+        "data_description": {
+          "github_token": "En personlig åtkomsttoken med läsåtkomst till publika förråd. Lämna tomt för att arbeta utan."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "IntegrationGuard är redan konfigurerat."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "GitHub-token",
+        "data": {
+          "github_token": "GitHub-token"
+        },
+        "data_description": {
+          "github_token": "Lämna tomt för att arbeta utan token."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "score": {
+        "name": "Hälsopoäng"
+      },
+      "problems": {
+        "name": "Fynd"
+      },
+      "stale": {
+        "name": "Föråldrade"
+      },
+      "abandoned": {
+        "name": "Övergivna"
+      },
+      "unused": {
+        "name": "Oanvända"
+      },
+      "repositories": {
+        "name": "Förråd"
+      },
+      "runtime_problems": {
+        "name": "Driftsproblem"
+      },
+      "repairs": {
+        "name": "Reparationsmeddelanden"
+      },
+      "last_scan": {
+        "name": "Senaste kontroll"
+      }
+    },
+    "binary_sensor": {
+      "critical": {
+        "name": "Kritisk"
+      }
+    },
+    "switch": {
+      "monitoring": {
+        "name": "Övervakning"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Kontrollera nu",
+      "description": "Kontrollerar alla installerade förråd direkt i stället för att vänta på schemat.",
+      "fields": {
+        "force": {
+          "name": "Tvinga",
+          "description": "Hämtar varje förråd från GitHub på nytt, även de nyligen kontrollerade. Timgränsen gäller fortfarande."
+        }
+      }
+    },
+    "ignore": {
+      "name": "Ignorera förrådet",
+      "description": "Rapporterar inte längre om ett förråd, om du vill bara en tid.",
+      "fields": {
+        "repository": {
+          "name": "Förråd",
+          "description": "Beteckningen från panelen: owner/repo, eller app:<slug> för en app."
+        },
+        "duration": {
+          "name": "Varaktighet",
+          "description": "Ignorera bara så länge. Lämna tomt för att ignorera tills vidare."
+        },
+        "reason": {
+          "name": "Orsak",
+          "description": "En anteckning till dig själv."
+        }
+      }
+    },
+    "unignore": {
+      "name": "Sluta ignorera",
+      "description": "Rapporterar om förrådet igen.",
+      "fields": {
+        "repository": {
+          "name": "Förråd",
+          "description": "Beteckningen från panelen: owner/repo, eller app:<slug> för en app."
+        }
+      }
+    },
+    "mark_used": {
+      "name": "Markera som använd",
+      "description": "Skriver över användningsbedömningen för hand, för sådant som används på ett sätt konfigurationen inte visar.",
+      "fields": {
+        "repository": {
+          "name": "Förråd",
+          "description": "Beteckningen från panelen: owner/repo, eller app:<slug> för en app."
+        },
+        "used": {
+          "name": "Använd",
+          "description": "På markerar som använd, av tar bort markeringen."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_repository": {
+      "message": "IntegrationGuard känner inte till något förråd som heter {repository}."
+    }
+  }
+}

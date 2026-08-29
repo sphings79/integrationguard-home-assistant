@@ -1,0 +1,30 @@
+name: Frontend
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and compare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npx tsc --noEmit
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
+      # HACS ships what is committed, so a stale bundle would go unnoticed.
+      - run: git diff --exit-code -- custom_components/integrationguard/frontend/
+      - name: Every catalogue carries the same keys
+        run: node scripts/check-locales.mjs
+        working-directory: frontend

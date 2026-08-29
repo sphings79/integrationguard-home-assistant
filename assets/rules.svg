@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="How the score is built: a repository starts at 100, each rule that fires subtracts its penalty, and the highest severity that fired decides the status">
+  <style>
+    .bg { fill: #0f1720; }
+    .panel { fill: #16202b; stroke: #28394a; stroke-width: 1.5; }
+    .t { font: 600 17px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .s { font: 400 14px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #9fb0c0; }
+    .m { font: 400 13px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #9fb0c0; }
+    .num { font: 700 30px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .minus { font: 600 16px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #ff6b6b; }
+    .cap { font: 600 14px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #41BDF5; letter-spacing: 1.2px; }
+    .badge { font: 500 13px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #0f1720; }
+  </style>
+  <rect class="bg" width="1200" height="620" rx="18"/>
+
+  <text class="cap" x="60" y="52">ONE REPOSITORY, STEP BY STEP</text>
+  <g transform="translate(60 74)">
+    <rect class="panel" width="1080" height="72" rx="12"/>
+    <text class="num" x="24" y="46">100</text>
+    <text class="t" x="110" y="34">Everything starts here</text>
+    <text class="s" x="110" y="56">Every repository is healthy until a rule says otherwise</text>
+  </g>
+
+  <g transform="translate(60 170)">
+    <rect class="panel" width="1080" height="66" rx="12"/>
+    <text class="minus" x="24" y="40">−20</text>
+    <text class="t" x="110" y="30">push_age</text>
+    <text class="m" x="110" y="52">no commit for 180 days · warning · threshold and penalty are yours to change</text>
+  </g>
+  <g transform="translate(60 246)">
+    <rect class="panel" width="1080" height="66" rx="12"/>
+    <text class="minus" x="24" y="40">−5</text>
+    <text class="t" x="110" y="30">many_issues</text>
+    <text class="m" x="110" y="52">more than 50 open issues · info</text>
+  </g>
+  <g transform="translate(60 322)">
+    <rect class="panel" width="1080" height="66" rx="12"/>
+    <text class="minus" x="24" y="40">−10</text>
+    <text class="t" x="110" y="30">unused</text>
+    <text class="m" x="110" y="52">installed but on no dashboard · info</text>
+  </g>
+
+  <g transform="translate(60 418)">
+    <rect class="panel" width="524" height="132" rx="12"/>
+    <text class="cap" x="24" y="34">SCORE</text>
+    <text class="num" x="24" y="86">65</text>
+    <text class="s" x="120" y="80">100 − 20 − 5 − 10</text>
+    <text class="m" x="24" y="112">never below zero</text>
+  </g>
+  <g transform="translate(616 418)">
+    <rect class="panel" width="524" height="132" rx="12"/>
+    <text class="cap" x="24" y="34">STATUS</text>
+    <rect x="24" y="60" width="92" height="30" rx="15" fill="#FFC107"/>
+    <text class="badge" x="70" y="80" text-anchor="middle">stale</text>
+    <text class="s" x="132" y="80">the highest severity that fired</text>
+    <text class="m" x="24" y="112">warning · not the score</text>
+  </g>
+
+  <text class="m" x="60" y="588">A harsher grade of the same rule replaces the milder one — push_age_severe fires instead of push_age, never both.</text>
+</svg>

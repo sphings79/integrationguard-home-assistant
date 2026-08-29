@@ -1,0 +1,132 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IntegrationGuard",
+        "description": "Token GitHubu je volitelný. Bez tokenu GitHub povoluje 60 dotazů za hodinu — na denní kontrolu to stačí, ale první průchod trvá. S tokenem je to 5000.",
+        "data": {
+          "github_token": "Token GitHubu"
+        },
+        "data_description": {
+          "github_token": "Osobní přístupový token s právem čtení veřejných repozitářů. Nech prázdné, chceš-li pracovat bez něj."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "IntegrationGuard je už nastaven."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Token GitHubu",
+        "data": {
+          "github_token": "Token GitHubu"
+        },
+        "data_description": {
+          "github_token": "Nech prázdné, chceš-li pracovat bez tokenu."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "score": {
+        "name": "Index zdraví"
+      },
+      "problems": {
+        "name": "Zjištění"
+      },
+      "stale": {
+        "name": "Zastaralé"
+      },
+      "abandoned": {
+        "name": "Opuštěné"
+      },
+      "unused": {
+        "name": "Nepoužívané"
+      },
+      "repositories": {
+        "name": "Repozitáře"
+      },
+      "runtime_problems": {
+        "name": "Problémy za běhu"
+      },
+      "repairs": {
+        "name": "Zprávy o opravách"
+      },
+      "last_scan": {
+        "name": "Poslední kontrola"
+      }
+    },
+    "binary_sensor": {
+      "critical": {
+        "name": "Kritické"
+      }
+    },
+    "switch": {
+      "monitoring": {
+        "name": "Sledování"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Zkontrolovat teď",
+      "description": "Zkontroluje hned všechny nainstalované repozitáře místo čekání na plán.",
+      "fields": {
+        "force": {
+          "name": "Vynutit",
+          "description": "Načte každý repozitář z GitHubu znovu, i ty nedávno zkontrolované. Hodinový limit stále platí."
+        }
+      }
+    },
+    "ignore": {
+      "name": "Ignorovat repozitář",
+      "description": "Přestane hlásit cokoli o repozitáři, případně jen na čas.",
+      "fields": {
+        "repository": {
+          "name": "Repozitář",
+          "description": "Označení z panelu: owner/repo nebo app:<slug> pro aplikaci."
+        },
+        "duration": {
+          "name": "Doba",
+          "description": "Ignorovat jen po tuto dobu. Nech prázdné pro trvalé ignorování."
+        },
+        "reason": {
+          "name": "Důvod",
+          "description": "Poznámka pro sebe."
+        }
+      }
+    },
+    "unignore": {
+      "name": "Přestat ignorovat",
+      "description": "Znovu hlásí o repozitáři.",
+      "fields": {
+        "repository": {
+          "name": "Repozitář",
+          "description": "Označení z panelu: owner/repo nebo app:<slug> pro aplikaci."
+        }
+      }
+    },
+    "mark_used": {
+      "name": "Označit jako používané",
+      "description": "Ručně přepíše vyhodnocení využití — pro věci používané způsobem, který konfigurace neukazuje.",
+      "fields": {
+        "repository": {
+          "name": "Repozitář",
+          "description": "Označení z panelu: owner/repo nebo app:<slug> pro aplikaci."
+        },
+        "used": {
+          "name": "Používané",
+          "description": "Zapnuto označí jako používané, vypnuto označení zruší."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_repository": {
+      "message": "IntegrationGuard nezná repozitář jménem {repository}."
+    }
+  }
+}

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400" role="img" aria-label="IntegrationGuard for Home Assistant — a health score ring showing 74 next to three status cards reading abandoned, unused and setup failed">
+  <style>
+    .bg { fill: #0f1720; }
+    .panel { fill: #16202b; stroke: #28394a; stroke-width: 1.5; }
+    .h1 { font: 600 46px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .sub { font: 400 21px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #9fb0c0; }
+    .tag { font: 500 15px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .muted { font: 400 14px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #9fb0c0; }
+    .score { font: 700 44px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .scorelbl { font: 400 13px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #9fb0c0; }
+  </style>
+  <rect class="bg" width="1200" height="400" rx="18"/>
+
+  <g transform="translate(72 96)">
+    <text class="h1" x="0" y="0">IntegrationGuard</text>
+    <text class="sub" x="0" y="42">Health of your HACS extensions — and which ones</text>
+    <text class="sub" x="0" y="74">nothing is using any more.</text>
+    <text class="muted" x="2" y="128">for Home Assistant · unofficial, community built</text>
+  </g>
+
+  <g transform="translate(760 200)">
+    <circle r="76" fill="none" stroke="#28394a" stroke-width="14"/>
+    <circle r="76" fill="none" stroke="#FFC107" stroke-width="14" stroke-linecap="round"
+            stroke-dasharray="353 477" transform="rotate(-90)"/>
+    <text class="score" x="0" y="8" text-anchor="middle">74</text>
+    <text class="scorelbl" x="0" y="32" text-anchor="middle">score</text>
+  </g>
+
+  <g transform="translate(892 92)">
+    <rect class="panel" width="236" height="60" rx="12"/>
+    <circle cx="26" cy="30" r="7" fill="#ff6b6b"/>
+    <text class="tag" x="48" y="27">3 abandoned</text>
+    <text class="muted" x="48" y="46">no commit in 2 years</text>
+  </g>
+  <g transform="translate(892 170)">
+    <rect class="panel" width="236" height="60" rx="12"/>
+    <circle cx="26" cy="30" r="7" fill="#FFC107"/>
+    <text class="tag" x="48" y="27">7 unused</text>
+    <text class="muted" x="48" y="46">on no dashboard</text>
+  </g>
+  <g transform="translate(892 248)">
+    <rect class="panel" width="236" height="60" rx="12"/>
+    <circle cx="26" cy="30" r="7" fill="#7C7CF5"/>
+    <text class="tag" x="48" y="27">1 setup failed</text>
+    <text class="muted" x="48" y="46">needs signing in again</text>
+  </g>
+</svg>

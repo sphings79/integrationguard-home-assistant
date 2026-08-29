@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-label="IntegrationGuard for Home Assistant — health of your HACS extensions, and which ones nothing is using any more">
+  <defs>
+    <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#41BDF5"/>
+      <stop offset="1" stop-color="#7C7CF5"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .bg { fill: #0f1720; }
+    .panel { fill: #16202b; stroke: #28394a; stroke-width: 1.5; }
+    .h1 { font: 700 62px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .sub { font: 400 27px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #9fb0c0; }
+    .foot { font: 400 20px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #9fb0c0; }
+    .tag { font: 500 19px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+  </style>
+  <rect class="bg" width="1280" height="640"/>
+
+  <g transform="translate(96 96) scale(0.32)">
+    <path d="M256 40 L432 108 v138 c0 108-74 182-176 226 C154 428 80 354 80 246 V108 Z"
+          fill="none" stroke="url(#sg)" stroke-width="34" stroke-linejoin="round"/>
+    <path d="M132 262 h58 l34-74 46 148 36-96 26 22 h48"
+          fill="none" stroke="url(#sg)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text class="h1" x="96" y="290">IntegrationGuard</text>
+  <text class="sub" x="96" y="342">Health of your HACS extensions — and which</text>
+  <text class="sub" x="96" y="382">ones nothing is using any more.</text>
+
+  <g transform="translate(96 440)">
+    <rect class="panel" width="248" height="66" rx="12"/>
+    <circle cx="30" cy="33" r="8" fill="#ff6b6b"/>
+    <text class="tag" x="56" y="40">abandoned</text>
+  </g>
+  <g transform="translate(368 440)">
+    <rect class="panel" width="248" height="66" rx="12"/>
+    <circle cx="30" cy="33" r="8" fill="#FFC107"/>
+    <text class="tag" x="56" y="40">unused</text>
+  </g>
+  <g transform="translate(640 440)">
+    <rect class="panel" width="248" height="66" rx="12"/>
+    <circle cx="30" cy="33" r="8" fill="#7C7CF5"/>
+    <text class="tag" x="56" y="40">setup failed</text>
+  </g>
+
+  <text class="foot" x="96" y="560">for Home Assistant · HACS · unofficial, community built</text>
+</svg>

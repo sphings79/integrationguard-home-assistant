@@ -1,0 +1,45 @@
+scan:
+  fields:
+    force:
+      required: false
+      default: false
+      selector:
+        boolean:
+
+ignore:
+  fields:
+    repository:
+      required: true
+      example: someone/some-card
+      selector:
+        text:
+    duration:
+      required: false
+      example: "24:00:00"
+      selector:
+        duration:
+    reason:
+      required: false
+      selector:
+        text:
+
+unignore:
+  fields:
+    repository:
+      required: true
+      example: someone/some-card
+      selector:
+        text:
+
+mark_used:
+  fields:
+    repository:
+      required: true
+      example: someone/some-card
+      selector:
+        text:
+    used:
+      required: false
+      default: true
+      selector:
+        boolean:

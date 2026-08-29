@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="The nine sensors IntegrationGuard creates, grouped under one device: health score, findings, stale, abandoned, unused, repositories, runtime problems, repair messages, last scan, plus a critical binary sensor and a monitoring switch">
+  <style>
+    .bg { fill: #0f1720; }
+    .panel { fill: #16202b; stroke: #28394a; stroke-width: 1.5; }
+    .dev { fill: #16202b; stroke: #41BDF5; stroke-width: 2; }
+    .t { font: 600 16px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .id { font: 400 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #9fb0c0; }
+    .val { font: 700 24px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #41BDF5; }
+    .cap { font: 600 14px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #41BDF5; letter-spacing: 1.2px; }
+    .note { font: 400 13px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #9fb0c0; }
+  </style>
+  <rect class="bg" width="1200" height="700" rx="18"/>
+
+  <g transform="translate(60 44)">
+    <rect class="dev" width="1080" height="62" rx="12"/>
+    <text class="t" x="24" y="30">Device: IntegrationGuard</text>
+    <text class="id" x="24" y="50">one service device — every entity below belongs to it</text>
+  </g>
+
+  <text class="cap" x="60" y="146">SENSORS</text>
+
+  <g transform="translate(60 162)">
+    <rect class="panel" width="345" height="92" rx="12"/>
+    <text class="val" x="22" y="42">89</text>
+    <text class="t" x="90" y="36">Health score</text>
+    <text class="id" x="90" y="58">sensor.integrationguard_score</text>
+    <text class="id" x="22" y="80">worst_score · worst_repository</text>
+  </g>
+  <g transform="translate(427 162)">
+    <rect class="panel" width="345" height="92" rx="12"/>
+    <text class="val" x="22" y="42">6</text>
+    <text class="t" x="90" y="36">Findings</text>
+    <text class="id" x="90" y="58">sensor.integrationguard_problems</text>
+    <text class="id" x="22" y="80">repositories · urls · by_status</text>
+  </g>
+  <g transform="translate(794 162)">
+    <rect class="panel" width="346" height="92" rx="12"/>
+    <text class="val" x="22" y="42">4</text>
+    <text class="t" x="90" y="36">Stale</text>
+    <text class="id" x="90" y="58">sensor.integrationguard_stale</text>
+    <text class="id" x="22" y="80">no commit past the threshold</text>
+  </g>
+
+  <g transform="translate(60 272)">
+    <rect class="panel" width="345" height="92" rx="12"/>
+    <text class="val" x="22" y="42">2</text>
+    <text class="t" x="90" y="36">Abandoned</text>
+    <text class="id" x="90" y="58">sensor.integrationguard_abandoned</text>
+    <text class="id" x="22" y="80">archived, gone or delisted</text>
+  </g>
+  <g transform="translate(427 272)">
+    <rect class="panel" width="345" height="92" rx="12"/>
+    <text class="val" x="22" y="42">7</text>
+    <text class="t" x="90" y="36">Unused</text>
+    <text class="id" x="90" y="58">sensor.integrationguard_unused</text>
+    <text class="id" x="22" y="80">repositories · confidence</text>
+  </g>
+  <g transform="translate(794 272)">
+    <rect class="panel" width="346" height="92" rx="12"/>
+    <text class="val" x="22" y="42">90</text>
+    <text class="t" x="90" y="36">Repositories</text>
+    <text class="id" x="90" y="58">..._repositories</text>
+    <text class="id" x="22" y="80">by_category · custom_repositories</text>
+  </g>
+
+  <g transform="translate(60 382)">
+    <rect class="panel" width="345" height="92" rx="12"/>
+    <text class="val" x="22" y="42">1</text>
+    <text class="t" x="90" y="36">Runtime problems</text>
+    <text class="id" x="90" y="58">..._runtime_problems</text>
+    <text class="id" x="22" y="80">state · reason · since · waiting</text>
+  </g>
+  <g transform="translate(427 382)">
+    <rect class="panel" width="345" height="92" rx="12"/>
+    <text class="val" x="22" y="42">2</text>
+    <text class="t" x="90" y="36">Repair messages</text>
+    <text class="id" x="90" y="58">sensor.integrationguard_repairs</text>
+    <text class="id" x="22" y="80">issues · by_severity</text>
+  </g>
+  <g transform="translate(794 382)">
+    <rect class="panel" width="346" height="92" rx="12"/>
+    <text class="t" x="22" y="36">Last scan</text>
+    <text class="id" x="22" y="58">sensor.integrationguard_last_scan</text>
+    <text class="id" x="22" y="80">duration · errors · github budget</text>
+  </g>
+
+  <text class="cap" x="60" y="522">BINARY SENSOR AND SWITCH</text>
+  <g transform="translate(60 538)">
+    <rect class="panel" width="528" height="82" rx="12"/>
+    <circle cx="40" cy="41" r="12" fill="#ff6b6b"/>
+    <text class="t" x="72" y="36">Critical</text>
+    <text class="id" x="72" y="58">binary_sensor.integrationguard_critical</text>
+  </g>
+  <g transform="translate(612 538)">
+    <rect class="panel" width="528" height="82" rx="12"/>
+    <rect x="26" y="31" width="40" height="22" rx="11" fill="#3ddc97"/>
+    <circle cx="56" cy="42" r="8" fill="#0f1720"/>
+    <text class="t" x="86" y="36">Monitoring</text>
+    <text class="id" x="86" y="58">switch.integrationguard_monitoring</text>
+  </g>
+
+  <text class="note" x="60" y="664">Entity ids follow the interface language — a German installation gets sensor.integrationguard_gesundheitswert.</text>
+</svg>

@@ -1,0 +1,132 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IntegrationGuard",
+        "description": "A GitHub token is optional. Without one, GitHub allows 60 requests per hour, which is enough for a daily check but slow on the first run. With a token it is 5000 per hour.",
+        "data": {
+          "github_token": "GitHub token"
+        },
+        "data_description": {
+          "github_token": "A personal access token with read access to public repositories. Leave empty to work without one."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "IntegrationGuard is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "GitHub token",
+        "data": {
+          "github_token": "GitHub token"
+        },
+        "data_description": {
+          "github_token": "Leave empty to work without a token."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "score": {
+        "name": "Health score"
+      },
+      "problems": {
+        "name": "Problems"
+      },
+      "stale": {
+        "name": "Stale"
+      },
+      "abandoned": {
+        "name": "Abandoned"
+      },
+      "unused": {
+        "name": "Unused"
+      },
+      "repositories": {
+        "name": "Repositories"
+      },
+      "last_scan": {
+        "name": "Last scan"
+      },
+      "runtime_problems": {
+        "name": "Runtime problems"
+      },
+      "repairs": {
+        "name": "Repair messages"
+      }
+    },
+    "binary_sensor": {
+      "critical": {
+        "name": "Critical"
+      }
+    },
+    "switch": {
+      "monitoring": {
+        "name": "Monitoring"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Scan now",
+      "description": "Checks every installed repository right away instead of waiting for the schedule.",
+      "fields": {
+        "force": {
+          "name": "Force",
+          "description": "Refresh every repository from GitHub, even those checked recently. The hourly rate limit still applies."
+        }
+      }
+    },
+    "ignore": {
+      "name": "Ignore repository",
+      "description": "Stops reporting about one repository, optionally only for a while.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "The identifier from the panel: owner/repo, or app:<slug> for an app."
+        },
+        "duration": {
+          "name": "Duration",
+          "description": "Ignore only for this long. Leave empty to ignore indefinitely."
+        },
+        "reason": {
+          "name": "Reason",
+          "description": "A note to yourself about why."
+        }
+      }
+    },
+    "unignore": {
+      "name": "Stop ignoring",
+      "description": "Reports about the repository again.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "The identifier from the panel: owner/repo, or app:<slug> for an app."
+        }
+      }
+    },
+    "mark_used": {
+      "name": "Mark as used",
+      "description": "Overrides the usage verdict by hand, for things that are used in a way the configuration does not show.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "The identifier from the panel: owner/repo, or app:<slug> for an app."
+        },
+        "used": {
+          "name": "Used",
+          "description": "On marks it as used, off removes the mark."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_repository": {
+      "message": "IntegrationGuard does not know a repository called {repository}."
+    }
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IntegrationGuard",
+        "description": "Token GitHub jest opcjonalny. Bez tokenu GitHub pozwala na 60 zapytań na godzinę — wystarczy do codziennego sprawdzenia, ale pierwszy przebieg trwa. Z tokenem to 5000.",
+        "data": {
+          "github_token": "Token GitHub"
+        },
+        "data_description": {
+          "github_token": "Osobisty token dostępu z uprawnieniem do odczytu publicznych repozytoriów. Zostaw puste, aby działać bez niego."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "IntegrationGuard jest już skonfigurowany."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Token GitHub",
+        "data": {
+          "github_token": "Token GitHub"
+        },
+        "data_description": {
+          "github_token": "Zostaw puste, aby działać bez tokenu."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "score": {
+        "name": "Wskaźnik kondycji"
+      },
+      "problems": {
+        "name": "Ustalenia"
+      },
+      "stale": {
+        "name": "Przestarzałe"
+      },
+      "abandoned": {
+        "name": "Porzucone"
+      },
+      "unused": {
+        "name": "Nieużywane"
+      },
+      "repositories": {
+        "name": "Repozytoria"
+      },
+      "runtime_problems": {
+        "name": "Problemy z działaniem"
+      },
+      "repairs": {
+        "name": "Komunikaty naprawcze"
+      },
+      "last_scan": {
+        "name": "Ostatnie sprawdzenie"
+      }
+    },
+    "binary_sensor": {
+      "critical": {
+        "name": "Krytyczne"
+      }
+    },
+    "switch": {
+      "monitoring": {
+        "name": "Monitorowanie"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Sprawdź teraz",
+      "description": "Sprawdza od razu wszystkie zainstalowane repozytoria, zamiast czekać na harmonogram.",
+      "fields": {
+        "force": {
+          "name": "Wymuś",
+          "description": "Pobiera każde repozytorium z GitHuba na nowo, także te sprawdzone niedawno. Limit godzinowy nadal obowiązuje."
+        }
+      }
+    },
+    "ignore": {
+      "name": "Ignoruj repozytorium",
+      "description": "Przestaje zgłaszać cokolwiek o repozytorium, w razie potrzeby tylko na jakiś czas.",
+      "fields": {
+        "repository": {
+          "name": "Repozytorium",
+          "description": "Identyfikator z panelu: owner/repo albo app:<slug> dla aplikacji."
+        },
+        "duration": {
+          "name": "Czas",
+          "description": "Ignoruj tylko przez ten czas. Zostaw puste, aby ignorować na stałe."
+        },
+        "reason": {
+          "name": "Powód",
+          "description": "Notatka dla siebie."
+        }
+      }
+    },
+    "unignore": {
+      "name": "Przestań ignorować",
+      "description": "Znowu zgłasza o repozytorium.",
+      "fields": {
+        "repository": {
+          "name": "Repozytorium",
+          "description": "Identyfikator z panelu: owner/repo albo app:<slug> dla aplikacji."
+        }
+      }
+    },
+    "mark_used": {
+      "name": "Oznacz jako używane",
+      "description": "Ręcznie nadpisuje ocenę użycia — dla rzeczy używanych w sposób, którego konfiguracja nie pokazuje.",
+      "fields": {
+        "repository": {
+          "name": "Repozytorium",
+          "description": "Identyfikator z panelu: owner/repo albo app:<slug> dla aplikacji."
+        },
+        "used": {
+          "name": "Używane",
+          "description": "Włączone oznacza jako używane, wyłączone zdejmuje oznaczenie."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_repository": {
+      "message": "IntegrationGuard nie zna repozytorium o nazwie {repository}."
+    }
+  }
+}

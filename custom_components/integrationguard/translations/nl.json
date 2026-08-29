@@ -1,0 +1,132 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IntegrationGuard",
+        "description": "Een GitHub-token is optioneel. Zonder token staat GitHub 60 verzoeken per uur toe — genoeg voor een dagelijkse controle, maar traag bij de eerste keer. Met token zijn het er 5000.",
+        "data": {
+          "github_token": "GitHub-token"
+        },
+        "data_description": {
+          "github_token": "Een persoonlijk toegangstoken met leestoegang tot openbare repositories. Laat leeg om zonder te werken."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "IntegrationGuard is al ingesteld."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "GitHub-token",
+        "data": {
+          "github_token": "GitHub-token"
+        },
+        "data_description": {
+          "github_token": "Laat leeg om zonder token te werken."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "score": {
+        "name": "Gezondheidsscore"
+      },
+      "problems": {
+        "name": "Bevindingen"
+      },
+      "stale": {
+        "name": "Verouderd"
+      },
+      "abandoned": {
+        "name": "Verlaten"
+      },
+      "unused": {
+        "name": "Ongebruikt"
+      },
+      "repositories": {
+        "name": "Repositories"
+      },
+      "runtime_problems": {
+        "name": "Uitvoeringsproblemen"
+      },
+      "repairs": {
+        "name": "Reparatiemeldingen"
+      },
+      "last_scan": {
+        "name": "Laatste controle"
+      }
+    },
+    "binary_sensor": {
+      "critical": {
+        "name": "Kritiek"
+      }
+    },
+    "switch": {
+      "monitoring": {
+        "name": "Bewaking"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Nu controleren",
+      "description": "Controleert alle geïnstalleerde repositories meteen in plaats van op de planning te wachten.",
+      "fields": {
+        "force": {
+          "name": "Forceren",
+          "description": "Haalt elke repository opnieuw van GitHub, ook de recent gecontroleerde. De uurlimiet blijft gelden."
+        }
+      }
+    },
+    "ignore": {
+      "name": "Repository negeren",
+      "description": "Meldt niets meer over een repository, desgewenst maar een tijdje.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "De aanduiding uit het paneel: owner/repo, of app:<slug> voor een app."
+        },
+        "duration": {
+          "name": "Duur",
+          "description": "Alleen zo lang negeren. Leeg laten om blijvend te negeren."
+        },
+        "reason": {
+          "name": "Reden",
+          "description": "Een notitie voor jezelf."
+        }
+      }
+    },
+    "unignore": {
+      "name": "Niet meer negeren",
+      "description": "Meldt weer over de repository.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "De aanduiding uit het paneel: owner/repo, of app:<slug> voor een app."
+        }
+      }
+    },
+    "mark_used": {
+      "name": "Als gebruikt markeren",
+      "description": "Overschrijft het gebruiksoordeel met de hand, voor dingen die op een manier worden gebruikt die de configuratie niet toont.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "De aanduiding uit het paneel: owner/repo, of app:<slug> voor een app."
+        },
+        "used": {
+          "name": "Gebruikt",
+          "description": "Aan markeert als gebruikt, uit haalt de markering weg."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_repository": {
+      "message": "IntegrationGuard kent geen repository met de naam {repository}."
+    }
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IntegrationGuard",
+        "description": "Un jeton GitHub est facultatif. Sans jeton, GitHub autorise 60 requêtes par heure — assez pour une vérification quotidienne, mais lent au premier passage. Avec un jeton, 5000 par heure.",
+        "data": {
+          "github_token": "Jeton GitHub"
+        },
+        "data_description": {
+          "github_token": "Un jeton d'accès personnel avec accès en lecture aux dépôts publics. Laissez vide pour travailler sans."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "IntegrationGuard est déjà configuré."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Jeton GitHub",
+        "data": {
+          "github_token": "Jeton GitHub"
+        },
+        "data_description": {
+          "github_token": "Laissez vide pour travailler sans jeton."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "score": {
+        "name": "Indice de santé"
+      },
+      "problems": {
+        "name": "Constats"
+      },
+      "stale": {
+        "name": "Vieillissants"
+      },
+      "abandoned": {
+        "name": "Abandonnés"
+      },
+      "unused": {
+        "name": "Inutilisés"
+      },
+      "repositories": {
+        "name": "Dépôts"
+      },
+      "runtime_problems": {
+        "name": "Problèmes d'exécution"
+      },
+      "repairs": {
+        "name": "Messages de réparation"
+      },
+      "last_scan": {
+        "name": "Dernière analyse"
+      }
+    },
+    "binary_sensor": {
+      "critical": {
+        "name": "Critique"
+      }
+    },
+    "switch": {
+      "monitoring": {
+        "name": "Surveillance"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Analyser maintenant",
+      "description": "Vérifie immédiatement tous les dépôts installés au lieu d'attendre la planification.",
+      "fields": {
+        "force": {
+          "name": "Forcer",
+          "description": "Récupère chaque dépôt depuis GitHub, même ceux vérifiés récemment. La limite horaire s'applique toujours."
+        }
+      }
+    },
+    "ignore": {
+      "name": "Ignorer le dépôt",
+      "description": "N'informe plus au sujet d'un dépôt, au besoin seulement pour un temps.",
+      "fields": {
+        "repository": {
+          "name": "Dépôt",
+          "description": "L'identifiant du panneau : owner/repo, ou app:<slug> pour une application."
+        },
+        "duration": {
+          "name": "Durée",
+          "description": "N'ignorer que pendant ce temps. Laissez vide pour ignorer indéfiniment."
+        },
+        "reason": {
+          "name": "Raison",
+          "description": "Une note pour vous-même."
+        }
+      }
+    },
+    "unignore": {
+      "name": "Ne plus ignorer",
+      "description": "Informe de nouveau au sujet du dépôt.",
+      "fields": {
+        "repository": {
+          "name": "Dépôt",
+          "description": "L'identifiant du panneau : owner/repo, ou app:<slug> pour une application."
+        }
+      }
+    },
+    "mark_used": {
+      "name": "Marquer comme utilisé",
+      "description": "Remplace le verdict d'utilisation à la main, pour ce qui est utilisé d'une manière que la configuration ne montre pas.",
+      "fields": {
+        "repository": {
+          "name": "Dépôt",
+          "description": "L'identifiant du panneau : owner/repo, ou app:<slug> pour une application."
+        },
+        "used": {
+          "name": "Utilisé",
+          "description": "Activé marque comme utilisé, désactivé retire la marque."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_repository": {
+      "message": "IntegrationGuard ne connaît aucun dépôt nommé {repository}."
+    }
+  }
+}

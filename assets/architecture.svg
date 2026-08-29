@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-label="Data flow: HACS in the running process, the public HACS store index, the optional GitHub API and the Supervisor feed IntegrationGuard, which combines health, usage and runtime into sensors, a panel, a card and notifications">
+  <style>
+    .bg { fill: #0f1720; }
+    .panel { fill: #16202b; stroke: #28394a; stroke-width: 1.5; }
+    .core { fill: #16202b; stroke: #41BDF5; stroke-width: 2; }
+    .t { font: 600 17px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .s { font: 400 13px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #9fb0c0; }
+    .m { font: 400 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #9fb0c0; }
+    .cap { font: 600 14px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #41BDF5; letter-spacing: 1.2px; }
+    .arrow { stroke: #28394a; stroke-width: 2; fill: none; marker-end: url(#a); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#28394a"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="640" rx="18"/>
+
+  <text class="cap" x="60" y="52">SOURCES</text>
+  <g transform="translate(60 70)">
+    <rect class="panel" width="290" height="80" rx="12"/>
+    <text class="t" x="20" y="34">HACS in the process</text>
+    <text class="m" x="20" y="58">hass.data["hacs"] · custom repos too</text>
+  </g>
+  <g transform="translate(60 168)">
+    <rect class="panel" width="290" height="80" rx="12"/>
+    <text class="t" x="20" y="34">HACS store index</text>
+    <text class="m" x="20" y="58">data-v2.hacs.xyz · ETag, no token</text>
+  </g>
+  <g transform="translate(60 266)">
+    <rect class="panel" width="290" height="80" rx="12"/>
+    <text class="t" x="20" y="34">GitHub API</text>
+    <text class="m" x="20" y="58">optional · archived, gone, releases</text>
+  </g>
+  <g transform="translate(60 364)">
+    <rect class="panel" width="290" height="80" rx="12"/>
+    <text class="t" x="20" y="34">Supervisor</text>
+    <text class="m" x="20" y="58">apps · HA OS and Supervised only</text>
+  </g>
+  <g transform="translate(60 462)">
+    <rect class="panel" width="290" height="98" rx="12"/>
+    <text class="t" x="20" y="34">Your installation</text>
+    <text class="m" x="20" y="58">dashboards · config entries</text>
+    <text class="m" x="20" y="78">repairs · themes · templates</text>
+  </g>
+
+  <path class="arrow" d="M356 110 H430"/>
+  <path class="arrow" d="M356 208 H430"/>
+  <path class="arrow" d="M356 306 H430"/>
+  <path class="arrow" d="M356 404 H430"/>
+  <path class="arrow" d="M356 505 H430"/>
+
+  <text class="cap" x="440" y="52">INTEGRATIONGUARD</text>
+  <g transform="translate(440 70)">
+    <rect class="core" width="300" height="490" rx="14"/>
+    <g transform="translate(24 40)">
+      <rect class="panel" width="252" height="86" rx="10"/>
+      <text class="t" x="18" y="32">Health</text>
+      <text class="s" x="18" y="56">16 rules, score 0–100</text>
+      <text class="s" x="18" y="74">status per repository</text>
+    </g>
+    <g transform="translate(24 150)">
+      <rect class="panel" width="252" height="86" rx="10"/>
+      <text class="t" x="18" y="32">Usage</text>
+      <text class="s" x="18" y="56">dashboards, entries, files</text>
+      <text class="s" x="18" y="74">with a confidence level</text>
+    </g>
+    <g transform="translate(24 260)">
+      <rect class="panel" width="252" height="86" rx="10"/>
+      <text class="t" x="18" y="32">Runtime</text>
+      <text class="s" x="18" y="56">config entries, repairs</text>
+      <text class="s" x="18" y="74">live, with a grace period</text>
+    </g>
+    <text class="m" x="24" y="386">once a day, or when you ask</text>
+    <text class="m" x="24" y="410">everything stored in .storage</text>
+    <text class="m" x="24" y="434">no cloud, no account</text>
+  </g>
+
+  <path class="arrow" d="M746 150 H820"/>
+  <path class="arrow" d="M746 260 H820"/>
+  <path class="arrow" d="M746 370 H820"/>
+  <path class="arrow" d="M746 470 H820"/>
+
+  <text class="cap" x="830" y="52">OUT</text>
+  <g transform="translate(830 110)">
+    <rect class="panel" width="310" height="80" rx="12"/>
+    <text class="t" x="20" y="34">Sensors</text>
+    <text class="m" x="20" y="58">score, findings, unused, runtime</text>
+  </g>
+  <g transform="translate(830 220)">
+    <rect class="panel" width="310" height="80" rx="12"/>
+    <text class="t" x="20" y="34">Panel</text>
+    <text class="m" x="20" y="58">eight views, eleven languages</text>
+  </g>
+  <g transform="translate(830 330)">
+    <rect class="panel" width="310" height="80" rx="12"/>
+    <text class="t" x="20" y="34">Lovelace card</text>
+    <text class="m" x="20" y="58">registers itself, no resource to add</text>
+  </g>
+  <g transform="translate(830 430)">
+    <rect class="panel" width="310" height="80" rx="12"/>
+    <text class="t" x="20" y="34">Notifications</text>
+    <text class="m" x="20" y="58">SMTP, Telegram, Pushover, ntfy</text>
+  </g>
+</svg>

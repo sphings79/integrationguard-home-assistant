@@ -1,0 +1,37 @@
+name: Wrong verdict
+description: A repository is judged unused, stale or abandoned when it is not.
+labels: [verdict]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        A wrong "unused" is the most useful kind of report — every case makes
+        the detection better for everyone.
+  - type: input
+    id: repository
+    attributes:
+      label: Which repository
+      placeholder: owner/repo, or app:slug for an app
+    validations:
+      required: true
+  - type: dropdown
+    id: verdict
+    attributes:
+      label: What it says
+      options: [unused, not registered, cannot be determined, stale, abandoned, critical]
+    validations:
+      required: true
+  - type: textarea
+    id: reality
+    attributes:
+      label: What is actually the case
+      description: For a card, where you use it — and whether that dashboard uses a strategy.
+    validations:
+      required: true
+  - type: textarea
+    id: detail
+    attributes:
+      label: Detail from the panel
+      description: >-
+        Repositories → the entry → the findings, and the usage detail. A
+        screenshot is fine.

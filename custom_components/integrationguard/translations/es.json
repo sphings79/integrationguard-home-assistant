@@ -1,0 +1,132 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IntegrationGuard",
+        "description": "Un token de GitHub es opcional. Sin token GitHub permite 60 peticiones por hora — suficiente para una comprobación diaria, pero lento la primera vez. Con token son 5000.",
+        "data": {
+          "github_token": "Token de GitHub"
+        },
+        "data_description": {
+          "github_token": "Un token de acceso personal con acceso de lectura a repositorios públicos. Déjalo vacío para trabajar sin él."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "IntegrationGuard ya está configurado."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Token de GitHub",
+        "data": {
+          "github_token": "Token de GitHub"
+        },
+        "data_description": {
+          "github_token": "Déjalo vacío para trabajar sin token."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "score": {
+        "name": "Índice de salud"
+      },
+      "problems": {
+        "name": "Hallazgos"
+      },
+      "stale": {
+        "name": "Anticuados"
+      },
+      "abandoned": {
+        "name": "Abandonados"
+      },
+      "unused": {
+        "name": "Sin usar"
+      },
+      "repositories": {
+        "name": "Repositorios"
+      },
+      "runtime_problems": {
+        "name": "Problemas de ejecución"
+      },
+      "repairs": {
+        "name": "Mensajes de reparación"
+      },
+      "last_scan": {
+        "name": "Última comprobación"
+      }
+    },
+    "binary_sensor": {
+      "critical": {
+        "name": "Crítico"
+      }
+    },
+    "switch": {
+      "monitoring": {
+        "name": "Supervisión"
+      }
+    }
+  },
+  "services": {
+    "scan": {
+      "name": "Comprobar ahora",
+      "description": "Comprueba de inmediato todos los repositorios instalados en lugar de esperar a la planificación.",
+      "fields": {
+        "force": {
+          "name": "Forzar",
+          "description": "Vuelve a consultar cada repositorio en GitHub, incluso los comprobados hace poco. El límite por hora sigue vigente."
+        }
+      }
+    },
+    "ignore": {
+      "name": "Ignorar el repositorio",
+      "description": "Deja de informar sobre un repositorio, si quieres solo durante un tiempo.",
+      "fields": {
+        "repository": {
+          "name": "Repositorio",
+          "description": "El identificador del panel: owner/repo, o app:<slug> para una aplicación."
+        },
+        "duration": {
+          "name": "Duración",
+          "description": "Ignorar solo durante este tiempo. Déjalo vacío para ignorar de forma permanente."
+        },
+        "reason": {
+          "name": "Motivo",
+          "description": "Una nota para ti mismo."
+        }
+      }
+    },
+    "unignore": {
+      "name": "Dejar de ignorar",
+      "description": "Vuelve a informar sobre el repositorio.",
+      "fields": {
+        "repository": {
+          "name": "Repositorio",
+          "description": "El identificador del panel: owner/repo, o app:<slug> para una aplicación."
+        }
+      }
+    },
+    "mark_used": {
+      "name": "Marcar como usado",
+      "description": "Sobrescribe a mano el veredicto de uso, para cosas que se usan de una forma que la configuración no muestra.",
+      "fields": {
+        "repository": {
+          "name": "Repositorio",
+          "description": "El identificador del panel: owner/repo, o app:<slug> para una aplicación."
+        },
+        "used": {
+          "name": "Usado",
+          "description": "Activado lo marca como usado, desactivado quita la marca."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_repository": {
+      "message": "IntegrationGuard no conoce ningún repositorio llamado {repository}."
+    }
+  }
+}

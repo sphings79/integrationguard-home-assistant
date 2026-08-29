@@ -1,0 +1,47 @@
+name: Bug report
+description: Something does not work.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: And what you expected instead.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: IntegrationGuard version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: ha
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.8.3"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installation type
+      options: [Home Assistant OS, Supervised, Container, Core]
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: >-
+        Settings → System → Logs. Add
+        `logger: logs: custom_components.integrationguard: debug`
+        to your configuration for more detail.
+      render: text
+  - type: textarea
+    id: sensor
+    attributes:
+      label: Attributes of sensor.integrationguard_last_scan
+      description: Developer tools → States. Shows which sources answered.
+      render: yaml

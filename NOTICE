@@ -1,0 +1,31 @@
+IntegrationGuard for Home Assistant
+Copyright (c) 2026 sphings79
+
+This project is an unofficial, community-built integration. It is not
+affiliated with, endorsed by, or supported by the Home Assistant project,
+Nabu Casa, Inc., HACS, or GitHub.
+
+IntegrationGuard reads publicly available data about the repositories you
+already have installed:
+
+  HACS data endpoints   https://data-v2.hacs.xyz
+                        The store index HACS itself uses. No token, no
+                        account, and the same data your HACS already fetches.
+  GitHub REST API       https://docs.github.com/rest
+                        Only public repository metadata, and only for
+                        repositories you installed. Optional: without a token
+                        the public rate limit applies.
+
+HACS is a separate project by Joakim Sørensen and its contributors:
+https://github.com/hacs/integration
+
+Third-party services IntegrationGuard can deliver notifications through —
+Telegram, Pushover and ntfy — are operated by their respective owners.
+IntegrationGuard only talks to their public APIs with credentials you supply.
+Their terms of service and rate limits apply:
+
+  Telegram Bot API   https://core.telegram.org/bots/api
+  Pushover           https://pushover.net/api
+  ntfy               https://docs.ntfy.sh
+
+"Home Assistant" is a trademark of the Home Assistant project.

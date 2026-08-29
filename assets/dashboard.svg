@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" width="1200" height="540" role="img" aria-label="A Lovelace dashboard mockup showing the IntegrationGuard card with a score ring of 89 and a list of findings, next to two entity cards counting unused extensions and runtime problems">
+  <style>
+    .bg { fill: #0f1720; }
+    .card { fill: #16202b; stroke: #28394a; stroke-width: 1.5; }
+    .t { font: 600 18px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .row { font: 400 15px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .s { font: 400 13px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #9fb0c0; }
+    .big { font: 700 40px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .ring { font: 700 26px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #e6edf3; }
+    .sep { stroke: #28394a; stroke-width: 1; }
+    .cap { font: 600 13px ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; fill: #41BDF5; letter-spacing: 1.2px; }
+  </style>
+  <rect class="bg" width="1200" height="540" rx="18"/>
+  <text class="cap" x="60" y="52">DASHBOARD</text>
+
+  <g transform="translate(60 74)">
+    <rect class="card" width="520" height="404" rx="14"/>
+    <g transform="translate(76 76)">
+      <circle r="42" fill="none" stroke="#28394a" stroke-width="9"/>
+      <circle r="42" fill="none" stroke="#FFC107" stroke-width="9" stroke-linecap="round"
+              stroke-dasharray="235 264" transform="rotate(-90)"/>
+      <text class="ring" x="0" y="9" text-anchor="middle">89</text>
+    </g>
+    <text class="t" x="146" y="64">IntegrationGuard</text>
+    <text class="s" x="146" y="88">Findings: 6 · Unused: 7 · Runtime: 1</text>
+
+    <line class="sep" x1="24" y1="138" x2="496" y2="138"/>
+    <text class="row" x="24" y="168">mini-graph-card</text>
+    <circle cx="404" cy="163" r="5" fill="#FFC107"/>
+    <text class="s" x="418" y="168">stale</text>
+    <line class="sep" x1="24" y1="190" x2="496" y2="190"/>
+    <text class="row" x="24" y="220">lovelace-card-tools</text>
+    <circle cx="404" cy="215" r="5" fill="#ff6b6b"/>
+    <text class="s" x="418" y="220">abandoned</text>
+    <line class="sep" x1="24" y1="242" x2="496" y2="242"/>
+    <text class="row" x="24" y="272">secondaryinfo-entity-row</text>
+    <circle cx="404" cy="267" r="5" fill="#ff6b6b"/>
+    <text class="s" x="418" y="272">abandoned</text>
+    <line class="sep" x1="24" y1="294" x2="496" y2="294"/>
+    <text class="row" x="24" y="324">apexcharts-card</text>
+    <circle cx="404" cy="319" r="5" fill="#FFC107"/>
+    <text class="s" x="418" y="324">stale</text>
+    <line class="sep" x1="24" y1="346" x2="496" y2="346"/>
+    <text class="s" x="24" y="376">and 2 more</text>
+  </g>
+
+  <g transform="translate(620 74)">
+    <rect class="card" width="520" height="190" rx="14"/>
+    <text class="s" x="24" y="42">Unused extensions</text>
+    <text class="big" x="24" y="100">7</text>
+    <text class="s" x="24" y="134">button-card · uptime-card · rgb-light-card</text>
+    <text class="s" x="24" y="158">3 of them with a certain verdict</text>
+  </g>
+  <g transform="translate(620 288)">
+    <rect class="card" width="520" height="190" rx="14"/>
+    <text class="s" x="24" y="42">Runtime problems</text>
+    <text class="big" x="24" y="100">1</text>
+    <text class="s" x="24" y="134">tuya_local · needs to be signed in again</text>
+    <text class="s" x="24" y="158">since 3 hours</text>
+  </g>
+</svg>
