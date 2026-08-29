@@ -6,6 +6,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-08-29
+
+### Fixed
+
+- **Integrations with a dismissed discovery were reported as not loaded.**
+  When you press "Ignore" on a discovered device, Home Assistant keeps a
+  config entry so it stops offering that device again — and never sets it
+  up, by design. Those entries sit at "not loaded" forever. On a real
+  installation that was 79 of powercalc's 108 entries and 13 of Battery
+  Notes' 14, so both looked broken. Dismissed discoveries are now left out
+  of both the runtime check and the usage check.
+
 ## [0.1.1] - 2026-08-29
 
 ### Fixed
@@ -65,6 +77,7 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.2
 [0.1.1]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.1
 [0.1.0]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.0

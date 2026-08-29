@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-from custom_components.integrationguard.const import RuntimeState
+from custom_components.integrationguard.const import RuntimeState, Usage
 from custom_components.integrationguard.models import RepairIssue, RuntimeInfo, Settings
 from custom_components.integrationguard.runtime.monitor import RuntimeMonitor, _worse
 
@@ -124,3 +124,79 @@ def test_links_are_built_from_the_repository():
     assert info.url == "https://github.com/someone/demo"
     assert info.configuration_url == "/config/integrations/integration/demo"
     assert RuntimeInfo(domain="core_thing").url is None
+
+
+class FakeEntries:
+    """A config entry registry that honours include_ignore, like the real one."""
+
+    def __init__(self, entries):
+        self.entries = entries
+        self.asked_with = []
+
+    def async_entries(self, domain=None, include_ignore=True, include_disabled=True):
+        self.asked_with.append(include_ignore)
+        return [
+            entry
+            for entry in self.entries
+            if (domain is None or entry.domain == domain)
+            and (include_ignore or entry.source != "ignore")
+        ]
+
+
+class FakeEntry:
+    """Just enough of a config entry for the checks that look at one."""
+
+    def __init__(self, domain, source="user", disabled_by=None):
+        self.domain = domain
+        self.source = source
+        self.disabled_by = disabled_by
+        self.entry_id = f"{domain}-{source}"
+
+
+class FakeHass:
+    def __init__(self, entries, components):
+        self.config_entries = FakeEntries(entries)
+        self.config = type("C", (), {"components": components})()
+
+
+def test_ignored_discoveries_do_not_count_as_configuration(monkeypatch):
+    """A dismissed discovery is not configuration.
+
+    Home Assistant never sets those entries up, so they sit at "not loaded"
+    forever. Counting them made powercalc look broken on a real installation:
+    79 of its 108 entries were dismissed discoveries.
+    """
+    from custom_components.integrationguard.usage import integrations
+
+    monkeypatch.setattr(
+        integrations, "_counts", lambda *a: {"entities": 0, "devices": 0}
+    )
+
+    hass = FakeHass(
+        [FakeEntry("powercalc", source="ignore") for _ in range(79)]
+        + [FakeEntry("demo", source="ignore")],
+        {"powercalc", "demo"},
+    )
+    # powercalc also has real entries; demo has nothing but dismissals.
+    hass.config_entries.entries += [FakeEntry("powercalc") for _ in range(29)]
+
+    _usage, _conf, detail = integrations.evaluate(hass, "powercalc", set())
+    assert detail["entries"] == 29
+    assert hass.config_entries.asked_with == [False]
+
+    usage, _confidence, detail = integrations.evaluate(hass, "demo", set())
+    assert detail["entries"] == 0
+    assert usage == Usage.UNUSED
+
+
+def test_the_runtime_monitor_also_leaves_them_out():
+    from custom_components.integrationguard.runtime.monitor import RuntimeMonitor
+
+    guard = monitor()
+    guard.hass = FakeHass([FakeEntry("demo", source="ignore")], {"demo"})
+    guard._domains = {"demo": "someone/demo"}
+    guard._issues_by_domain = lambda: {}
+
+    result = RuntimeMonitor._evaluate(guard, Settings())
+    assert result == {}, "a domain with nothing but dismissals has nothing to judge"
+    assert guard.hass.config_entries.asked_with == [False]

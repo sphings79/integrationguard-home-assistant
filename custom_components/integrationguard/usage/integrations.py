@@ -36,7 +36,9 @@ def evaluate(
     hass: HomeAssistant, domain: str, required: set[str]
 ) -> tuple[str, str, dict]:
     """Return usage, confidence and detail for one integration."""
-    entries = hass.config_entries.async_entries(domain)
+    # Ignored discoveries are not configuration: they only exist so Home
+    # Assistant stops offering the device.
+    entries = hass.config_entries.async_entries(domain, include_ignore=False)
     loaded = domain in hass.config.components
     detail: dict = {"entries": len(entries), "loaded": loaded}
 

@@ -243,7 +243,14 @@ class RuntimeMonitor:
         result: dict[str, RuntimeInfo] = {}
 
         for domain in self._watched_domains(settings):
-            entries = self.hass.config_entries.async_entries(domain)
+            # Entries the user ignored during discovery exist only to stop
+            # Home Assistant offering the device again. It never sets them up
+            # (config_entries.py: "if self.source == SOURCE_IGNORE"), so they
+            # are permanently "not loaded" and say nothing about the
+            # integration.
+            entries = self.hass.config_entries.async_entries(
+                domain, include_ignore=False
+            )
             if not entries:
                 # No config entry means nothing to judge here. Whether the
                 # integration is used at all is a different question.
@@ -330,7 +337,12 @@ class RuntimeMonitor:
     def _watched_domains(self, settings: Settings) -> set[str]:
         """Return the domains to look at."""
         if settings.runtime_include_all:
-            return {entry.domain for entry in self.hass.config_entries.async_entries()}
+            return {
+                entry.domain
+                for entry in self.hass.config_entries.async_entries(
+                    include_ignore=False
+                )
+            }
         return set(self._domains)
 
     def _entry_state(self, entry: ConfigEntry) -> str:
