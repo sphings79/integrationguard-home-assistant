@@ -6,6 +6,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-08-29
+
+### Fixed
+
+- **Integrations that own no entities were reported as unused.** An
+  integration with a config entry but no entities and no devices was called
+  unused. Switch Manager runs blueprints on events, others only register
+  services or publish over MQTT — none of them owns an entity, and all of
+  them were flagged. Having been configured is the evidence; owning no
+  entity is not evidence of the opposite. An enabled config entry now means
+  used, and the counts are shown but no longer judged on.
+- An integration that is loaded without a config entry and owns nothing is
+  "cannot be determined" rather than unused. It may be configured in YAML
+  and own nothing, which cannot be told apart from here.
+
 ## [0.1.5] - 2026-08-29
 
 ### Fixed
@@ -117,7 +132,8 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.6
 [0.1.5]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.5
 [0.1.4]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.4
 [0.1.3]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.3

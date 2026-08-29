@@ -186,7 +186,8 @@ def test_ignored_discoveries_do_not_count_as_configuration(monkeypatch):
 
     usage, _confidence, detail = integrations.evaluate(hass, "demo", set())
     assert detail["entries"] == 0
-    assert usage == Usage.UNUSED
+    # Loaded, nothing of its own: not enough to claim either way.
+    assert usage == Usage.UNDETERMINED
 
 
 def test_the_runtime_monitor_also_leaves_them_out():
@@ -200,3 +201,64 @@ def test_the_runtime_monitor_also_leaves_them_out():
     result = RuntimeMonitor._evaluate(guard, Settings())
     assert result == {}, "a domain with nothing but dismissals has nothing to judge"
     assert guard.hass.config_entries.asked_with == [False]
+
+
+def _judge(entries, components, domain, required=frozenset(), counts=(0, 0)):
+    """Run the integration check against a made-up installation."""
+    import pytest
+
+    from custom_components.integrationguard.usage import integrations
+
+    monkey = pytest.MonkeyPatch()
+    monkey.setattr(
+        integrations,
+        "_counts",
+        lambda *a: {"entities": counts[0], "devices": counts[1]},
+    )
+    try:
+        return integrations.evaluate(
+            FakeHass(entries, components), domain, set(required)
+        )
+    finally:
+        monkey.undo()
+
+
+def test_a_configured_integration_is_used_even_with_no_entities():
+    """Switch Manager runs blueprints on events and owns nothing.
+
+    Having been configured is the evidence. Owning no entity is not evidence
+    of the opposite — plenty of integrations only register services or
+    publish over MQTT.
+    """
+    usage, confidence, detail = _judge(
+        [FakeEntry("switch_manager")], {"switch_manager"}, "switch_manager"
+    )
+    assert usage == Usage.USED
+    assert confidence == "high"
+    # Still reported, just not judged on.
+    assert detail["entities"] == 0
+
+
+def test_an_integration_switched_off_by_hand_is_unused():
+    usage, confidence, _ = _judge(
+        [FakeEntry("demo", disabled_by="user")], {"demo"}, "demo"
+    )
+    assert usage == Usage.UNUSED
+    assert confidence == "medium"
+
+
+def test_an_integration_that_was_never_set_up_is_unused():
+    usage, confidence, _ = _judge([], set(), "demo")
+    assert usage == Usage.UNUSED
+    assert confidence == "high"
+
+
+def test_a_yaml_integration_with_entities_is_used():
+    usage, _, _ = _judge([], {"demo"}, "demo", counts=(3, 0))
+    assert usage == Usage.USED
+
+
+def test_a_backend_helper_another_integration_needs_is_not_unused():
+    usage, _, detail = _judge([], {"demo"}, "demo", required={"demo"})
+    assert usage == Usage.UNDETERMINED
+    assert detail["required_by_another_integration"] is True

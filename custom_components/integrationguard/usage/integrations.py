@@ -45,15 +45,15 @@ def evaluate(
     if entries:
         enabled = [entry for entry in entries if entry.disabled_by is None]
         detail["enabled_entries"] = len(enabled)
-        if not enabled:
-            return Usage.UNUSED, Confidence.MEDIUM, detail
-        counts = _counts(hass, domain, [entry.entry_id for entry in enabled])
-        detail.update(counts)
-        if counts["entities"] == 0 and counts["devices"] == 0:
-            # Plenty of service integrations legitimately own nothing, so this
-            # is a hint rather than a verdict.
-            return Usage.UNUSED, Confidence.LOW, detail
-        return Usage.USED, Confidence.HIGH, detail
+        # Counted for information only. Plenty of integrations legitimately
+        # own nothing: Switch Manager runs blueprints on events, others only
+        # register services or publish over MQTT. Having been configured is
+        # the evidence; owning no entity is not evidence of the opposite.
+        detail.update(_counts(hass, domain, [e.entry_id for e in enabled]))
+        if enabled:
+            return Usage.USED, Confidence.HIGH, detail
+        # Every entry switched off by hand is a decision, not a guess.
+        return Usage.UNUSED, Confidence.MEDIUM, detail
 
     if not loaded:
         # Not even imported: nothing on this installation asks for it.
@@ -67,7 +67,10 @@ def evaluate(
     if domain in required:
         detail["required_by_another_integration"] = True
         return Usage.UNDETERMINED, Confidence.LOW, detail
-    return Usage.UNUSED, Confidence.MEDIUM, detail
+    # Loaded without a config entry and without anything of its own. Something
+    # pulled it in, or it is configured in YAML and owns nothing. Neither can
+    # be told apart from here.
+    return Usage.UNDETERMINED, Confidence.LOW, detail
 
 
 def _counts(hass: HomeAssistant, domain: str, entry_ids: list[str] | None) -> dict:
