@@ -22,6 +22,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `custom:card-mod`. The keys of the dashboard configuration are now read as
   well, so such a plugin is recognised as used instead of merely
   undetermined.
+- **Clicking a repository in the overview or in the unused list did
+  nothing.** Both set the selection but stayed on their own tab, and the
+  detail is only rendered in the repositories tab. They now switch there and
+  clear the filters, so the entry cannot be hidden behind one.
 
 ## [0.1.2] - 2026-08-29
 

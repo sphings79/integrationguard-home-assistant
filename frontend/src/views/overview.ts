@@ -166,8 +166,7 @@ export function renderOverview(ctx: Ctx): TemplateResult {
                 (item) => html`
                   <div
                     class="list-item clickable"
-                    @click=${() =>
-                      ctx.patchUi({ selected: item.key, search: "" })}
+                    @click=${() => ctx.open(item.key)}
                   >
                     <div class="grow">
                       <div class="name">${item.name}</div>

@@ -9,8 +9,7 @@ function group(ctx: Ctx, items: Repository[]): TemplateResult {
       (item) => html`
         <div
           class="list-item clickable"
-          @click=${() =>
-            ctx.patchUi({ selected: item.key, search: "", category: "" })}
+          @click=${() => ctx.open(item.key)}
         >
           <div class="grow">
             <div class="name">${item.name}</div>

@@ -21,6 +21,8 @@ export interface Ctx {
   /** View-local state the shell keeps for us. */
   ui: UiState;
   patchUi(patch: Partial<UiState>): void;
+  /** Show one repository's detail, from wherever the user clicked. */
+  open(key: string): void;
   scan(force?: boolean): void;
   saveSettings(settings: Settings, githubToken?: string): void;
   saveRules(rules: Rule[]): void;

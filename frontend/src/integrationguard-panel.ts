@@ -379,6 +379,20 @@ export class IntegrationGuardPanel extends LitElement {
       patchUi: (patch) => {
         this.ui = { ...this.ui, ...patch };
       },
+      open: (key: string) => {
+        // The detail lives in the repositories tab; clearing the filters makes
+        // sure the entry is not hidden behind one of them.
+        this.tab = "repositories";
+        this.ui = {
+          ...this.ui,
+          selected: key,
+          search: "",
+          category: "",
+          status: "",
+          usage: "",
+          showIgnored: true,
+        };
+      },
       scan: (force = false) => void this.run(() => this.api!.scan(force)),
       saveSettings: (settings: Settings, token?: string) =>
         void this.run(
