@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+from custom_components.integrationguard.const import Usage
 from custom_components.integrationguard.usage import files, orphans, plugins, themes
 
 
@@ -147,3 +148,63 @@ def test_the_corpus_covers_configuration_and_storage(tmp_path):
     assert "python_script.tidy_up" in corpus
     assert "greeting.jinja" in corpus
     assert "ignore_me" not in corpus
+
+
+def _plugin(tmp_path, repo, content, used_types=frozenset()):
+    community = bundle(tmp_path, repo, f"{repo}.js", content)
+    return plugins.read_plugin_files(community, f"someone/{repo}", set(used_types))
+
+
+def _verdict(found, dashboards):
+    from custom_components.integrationguard.models import RepositoryInfo
+    from custom_components.integrationguard.usage.engine import _evaluate_plugin
+
+    info = RepositoryInfo(full_name="someone/thing", category="plugin")
+    disk = type("D", (), {"plugin_files": {"someone/thing": found}})()
+    urls = [f"/hacsfiles/{found.directory.name}/x.js"] if found.directory else []
+    return _evaluate_plugin(info, disk, dashboards, urls)
+
+
+def test_a_library_is_never_called_unused(tmp_path):
+    """card-mod defines elements but announces no card.
+
+    Reading element names out of a bundle says nothing about what a dashboard
+    would have to write to use the plugin, so claiming nobody uses it would
+    be a guess.
+    """
+    found = _plugin(
+        tmp_path,
+        "thing",
+        'customElements.define("card-mod",X);customElements.define("mod-card",Y)',
+    )
+    result = _verdict(found, plugins.DashboardUsage(types={"a": {"other-card"}}))
+    assert result.usage == Usage.UNDETERMINED
+
+
+def test_a_plugin_used_through_its_own_key_counts_as_used(tmp_path):
+    """card-mod is switched on by writing card_mod: under a card."""
+    found = _plugin(tmp_path, "thing", 'customElements.define("card-mod",X)')
+    dashboards = plugins.DashboardUsage(types={"a": set()}, keys={"type", "card_mod"})
+    result = _verdict(found, dashboards)
+    assert result.usage == Usage.USED
+    assert result.detail["used_keys"] == ["card_mod"]
+
+
+def test_a_registered_card_nobody_uses_is_unused(tmp_path):
+    found = _plugin(
+        tmp_path,
+        "thing",
+        'window.customCards.push({type:"demo-card",name:"Demo"});'
+        'customElements.define("demo-card",X)',
+    )
+    result = _verdict(found, plugins.DashboardUsage(types={"a": {"other-card"}}))
+    assert result.usage == Usage.UNUSED
+    assert result.confidence == "high"
+
+
+def test_a_strategy_dashboard_lowers_the_confidence(tmp_path):
+    found = _plugin(tmp_path, "thing", 'window.customCards.push({type:"demo-card"});')
+    dashboards = plugins.DashboardUsage(
+        types={"a": set()}, uncertain={"map": "strategy"}
+    )
+    assert _verdict(found, dashboards).confidence == "medium"

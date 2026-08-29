@@ -6,6 +6,23 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-08-29
+
+### Fixed
+
+- **card-mod and card-tools were reported as unused.** Exactly the case the
+  detection was built to avoid. A plugin that defines custom elements but
+  announces no card of its own was called unused with medium confidence —
+  which is the guess this integration promises not to make. Only a plugin
+  that announces a card, badge, row or feature through `window.customCards`
+  or one of its siblings can be called unused now; everything else is
+  "cannot be determined".
+- **Plugins used through a key of their own were missed.** card-mod is
+  switched on by writing `card_mod:` under a card, never as
+  `custom:card-mod`. The keys of the dashboard configuration are now read as
+  well, so such a plugin is recognised as used instead of merely
+  undetermined.
+
 ## [0.1.2] - 2026-08-29
 
 ### Fixed
@@ -77,7 +94,8 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.3
 [0.1.2]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.2
 [0.1.1]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.1
 [0.1.0]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.0

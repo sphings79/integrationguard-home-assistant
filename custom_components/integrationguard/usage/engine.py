@@ -143,16 +143,22 @@ def _evaluate_plugin(
         detail["dashboards"] = dashboards.dashboards_using(in_use)
         return UsageResult(Usage.USED, Confidence.HIGH, detail)
 
-    if not found.types:
-        # Nothing addressable came out of the bundle. Card-mod, kiosk-mode and
-        # the icon sets land here — they are used through other means, and
-        # guessing would be worse than saying nothing.
+    # Some plugins are not addressed as a card but through a key of their own:
+    # card-mod is switched on by writing "card_mod:" under a card.
+    by_key = {name.replace("-", "_") for name in found.types} & dashboards.keys
+    if by_key:
+        detail["used_keys"] = sorted(by_key)
+        return UsageResult(Usage.USED, Confidence.HIGH, detail)
+
+    if not found.registered:
+        # The plugin announces no card, badge, row or feature of its own, so
+        # there is no telling what a dashboard would have to write to use it.
+        # Libraries land here, and so does anything whose bundle does not give
+        # its names away. Saying "unused" would be a guess.
         return UsageResult(Usage.UNDETERMINED, Confidence.LOW, detail)
 
-    confidence = Confidence.HIGH if found.registered else Confidence.MEDIUM
-    if dashboards.uncertain:
-        # A strategy decides at render time; the card may well appear there.
-        confidence = Confidence.MEDIUM if found.registered else Confidence.LOW
+    # A strategy decides at render time; the card may still appear there.
+    confidence = Confidence.MEDIUM if dashboards.uncertain else Confidence.HIGH
     return UsageResult(Usage.UNUSED, confidence, detail)
 
 

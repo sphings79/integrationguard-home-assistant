@@ -114,10 +114,17 @@ directions: the names read out of the bundle, **and** every `custom:` type the
 dashboards ask for looked up as a string inside the bundle. A card a dashboard
 addresses has to carry its own name somewhere, whatever it does with it.
 
-If neither direction produces anything, the answer is **cannot be determined**,
-not *unused*. That is what keeps card-mod, card-tools, kiosk-mode, custom-sidebar
-and the icon sets out of the results — they bring no card you could address, and
-guessing would be worse than saying nothing.
+Only a plugin that **announces a card of its own** — through
+`window.customCards` or one of its siblings — can ever be called unused. Without
+that announcement there is no telling what a dashboard would have to write to
+use it, so the answer is **cannot be determined**. That is what keeps card-mod,
+card-tools, kiosk-mode, custom-sidebar and the icon sets out of the results.
+Reading element names out of a bundle is not enough to say the opposite:
+libraries define elements too.
+
+Some plugins are not addressed as a card at all but through a key of their own —
+card-mod is switched on by writing `card_mod:` under a card. Those keys are read
+out of the dashboards as well, so a plugin used that way is recognised.
 
 Where a **strategy dashboard** is in use, the confidence drops one level: a
 strategy decides at render time what to show, and that cannot be read from the

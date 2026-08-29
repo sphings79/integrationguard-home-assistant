@@ -118,10 +118,18 @@ Namen **und** jeder `custom:`-Typ, den die Dashboards ansprechen, als
 Zeichenkette im Bundle nachgeschlagen. Eine Karte, die ein Dashboard anspricht,
 muss ihren eigenen Namen irgendwo tragen, egal was sie damit anstellt.
 
-Kommt aus beiden Richtungen nichts, lautet die Antwort **nicht bestimmbar**,
-nicht *ungenutzt*. Genau das hält card-mod, card-tools, kiosk-mode,
-custom-sidebar und die Icon-Sets aus den Ergebnissen heraus — die bringen keine
-ansprechbare Karte mit, und Raten wäre schlechter als Schweigen.
+Als ungenutzt gilt nur, was **eine eigene Karte anmeldet** — über
+`window.customCards` oder eine der verwandten Registrierungen. Ohne diese
+Anmeldung lässt sich nicht sagen, was ein Dashboard schreiben müsste, um das
+Plugin zu benutzen; die Antwort lautet dann **nicht bestimmbar**. Genau das hält
+card-mod, card-tools, kiosk-mode, custom-sidebar und die Icon-Sets aus den
+Ergebnissen heraus. Elementnamen aus dem Bundle zu lesen reicht für das
+Gegenteil nicht: Bibliotheken definieren auch Elemente.
+
+Manche Plugins werden gar nicht als Karte angesprochen, sondern über einen
+eigenen Schlüssel — card-mod schaltet man ein, indem man `card_mod:` unter eine
+Karte schreibt. Diese Schlüssel werden aus den Dashboards mitgelesen, so ein
+Plugin wird also erkannt.
 
 Ist ein **Strategy-Dashboard** im Einsatz, sinkt die Konfidenz um eine Stufe:
 eine Strategy entscheidet zur Laufzeit, was sie anzeigt, und das steht in keiner

@@ -40,6 +40,8 @@ TYPE_IN_REGISTRY = re.compile(rf"type\s*:\s*[\"'`]({TAG})[\"'`]")
 REGISTRY_WINDOW = 3000
 
 USED_TYPE = re.compile(rf"custom:({TAG})")
+# Keys of the dashboard configuration, for plugins used through one.
+USED_KEY = re.compile(r'"(\w+)"\s*:')
 
 MAX_BUNDLE_BYTES = 8 * 1024 * 1024
 
@@ -66,6 +68,10 @@ class DashboardUsage:
     """Which custom types the dashboards use, and what could not be read."""
 
     types: dict[str, set[str]] = field(default_factory=dict)
+    # Every key that appears anywhere in a dashboard. Some plugins are not
+    # addressed as a card at all but through a key of their own — card-mod is
+    # switched on by writing "card_mod:" under a card.
+    keys: set[str] = field(default_factory=set)
     # Dashboard -> why its contents cannot be known ("unreadable", "strategy").
     uncertain: dict[str, str] = field(default_factory=dict)
 
