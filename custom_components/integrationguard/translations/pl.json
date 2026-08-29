@@ -87,7 +87,7 @@
       "fields": {
         "repository": {
           "name": "Repozytorium",
-          "description": "Identyfikator z panelu: owner/repo albo app:<slug> dla aplikacji."
+          "description": "Identyfikator z panelu: owner/repo albo app:slug dla aplikacji."
         },
         "duration": {
           "name": "Czas",
@@ -105,7 +105,7 @@
       "fields": {
         "repository": {
           "name": "Repozytorium",
-          "description": "Identyfikator z panelu: owner/repo albo app:<slug> dla aplikacji."
+          "description": "Identyfikator z panelu: owner/repo albo app:slug dla aplikacji."
         }
       }
     },
@@ -115,7 +115,7 @@
       "fields": {
         "repository": {
           "name": "Repozytorium",
-          "description": "Identyfikator z panelu: owner/repo albo app:<slug> dla aplikacji."
+          "description": "Identyfikator z panelu: owner/repo albo app:slug dla aplikacji."
         },
         "used": {
           "name": "Używane",

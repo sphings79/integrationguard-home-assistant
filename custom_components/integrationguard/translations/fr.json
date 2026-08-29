@@ -87,7 +87,7 @@
       "fields": {
         "repository": {
           "name": "Dépôt",
-          "description": "L'identifiant du panneau : owner/repo, ou app:<slug> pour une application."
+          "description": "L'identifiant du panneau : owner/repo, ou app:slug pour une application."
         },
         "duration": {
           "name": "Durée",
@@ -105,7 +105,7 @@
       "fields": {
         "repository": {
           "name": "Dépôt",
-          "description": "L'identifiant du panneau : owner/repo, ou app:<slug> pour une application."
+          "description": "L'identifiant du panneau : owner/repo, ou app:slug pour une application."
         }
       }
     },
@@ -115,7 +115,7 @@
       "fields": {
         "repository": {
           "name": "Dépôt",
-          "description": "L'identifiant du panneau : owner/repo, ou app:<slug> pour une application."
+          "description": "L'identifiant du panneau : owner/repo, ou app:slug pour une application."
         },
         "used": {
           "name": "Utilisé",

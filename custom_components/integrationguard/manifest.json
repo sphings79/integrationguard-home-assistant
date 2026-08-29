@@ -1,6 +1,9 @@
 {
   "domain": "integrationguard",
   "name": "IntegrationGuard",
+  "after_dependencies": [
+    "hassio"
+  ],
   "codeowners": [
     "@sphings79"
   ],

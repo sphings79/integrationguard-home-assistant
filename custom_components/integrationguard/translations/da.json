@@ -87,7 +87,7 @@
       "fields": {
         "repository": {
           "name": "Arkiv",
-          "description": "Betegnelsen fra panelet: owner/repo eller app:<slug> for en app."
+          "description": "Betegnelsen fra panelet: owner/repo eller app:slug for en app."
         },
         "duration": {
           "name": "Varighed",
@@ -105,7 +105,7 @@
       "fields": {
         "repository": {
           "name": "Arkiv",
-          "description": "Betegnelsen fra panelet: owner/repo eller app:<slug> for en app."
+          "description": "Betegnelsen fra panelet: owner/repo eller app:slug for en app."
         }
       }
     },
@@ -115,7 +115,7 @@
       "fields": {
         "repository": {
           "name": "Arkiv",
-          "description": "Betegnelsen fra panelet: owner/repo eller app:<slug> for en app."
+          "description": "Betegnelsen fra panelet: owner/repo eller app:slug for en app."
         },
         "used": {
           "name": "Brugt",

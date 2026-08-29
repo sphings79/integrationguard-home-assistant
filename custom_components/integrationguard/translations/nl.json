@@ -87,7 +87,7 @@
       "fields": {
         "repository": {
           "name": "Repository",
-          "description": "De aanduiding uit het paneel: owner/repo, of app:<slug> voor een app."
+          "description": "De aanduiding uit het paneel: owner/repo, of app:slug voor een app."
         },
         "duration": {
           "name": "Duur",
@@ -105,7 +105,7 @@
       "fields": {
         "repository": {
           "name": "Repository",
-          "description": "De aanduiding uit het paneel: owner/repo, of app:<slug> voor een app."
+          "description": "De aanduiding uit het paneel: owner/repo, of app:slug voor een app."
         }
       }
     },
@@ -115,7 +115,7 @@
       "fields": {
         "repository": {
           "name": "Repository",
-          "description": "De aanduiding uit het paneel: owner/repo, of app:<slug> voor een app."
+          "description": "De aanduiding uit het paneel: owner/repo, of app:slug voor een app."
         },
         "used": {
           "name": "Gebruikt",

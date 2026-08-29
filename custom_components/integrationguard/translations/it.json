@@ -87,7 +87,7 @@
       "fields": {
         "repository": {
           "name": "Repository",
-          "description": "L'identificativo dal pannello: owner/repo, oppure app:<slug> per un'app."
+          "description": "L'identificativo dal pannello: owner/repo, oppure app:slug per un'app."
         },
         "duration": {
           "name": "Durata",
@@ -105,7 +105,7 @@
       "fields": {
         "repository": {
           "name": "Repository",
-          "description": "L'identificativo dal pannello: owner/repo, oppure app:<slug> per un'app."
+          "description": "L'identificativo dal pannello: owner/repo, oppure app:slug per un'app."
         }
       }
     },
@@ -115,7 +115,7 @@
       "fields": {
         "repository": {
           "name": "Repository",
-          "description": "L'identificativo dal pannello: owner/repo, oppure app:<slug> per un'app."
+          "description": "L'identificativo dal pannello: owner/repo, oppure app:slug per un'app."
         },
         "used": {
           "name": "Usato",

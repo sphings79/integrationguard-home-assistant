@@ -87,7 +87,7 @@
       "fields": {
         "repository": {
           "name": "Repository",
-          "description": "Die Kennung aus dem Panel: owner/repo, oder app:<slug> für eine App."
+          "description": "Die Kennung aus dem Panel: owner/repo, oder app:slug für eine App."
         },
         "duration": {
           "name": "Dauer",
@@ -105,7 +105,7 @@
       "fields": {
         "repository": {
           "name": "Repository",
-          "description": "Die Kennung aus dem Panel: owner/repo, oder app:<slug> für eine App."
+          "description": "Die Kennung aus dem Panel: owner/repo, oder app:slug für eine App."
         }
       }
     },
@@ -115,7 +115,7 @@
       "fields": {
         "repository": {
           "name": "Repository",
-          "description": "Die Kennung aus dem Panel: owner/repo, oder app:<slug> für eine App."
+          "description": "Die Kennung aus dem Panel: owner/repo, oder app:slug für eine App."
         },
         "used": {
           "name": "Benutzt",

@@ -87,7 +87,7 @@
       "fields": {
         "repository": {
           "name": "Repositório",
-          "description": "O identificador do painel: owner/repo, ou app:<slug> para uma aplicação."
+          "description": "O identificador do painel: owner/repo, ou app:slug para uma aplicação."
         },
         "duration": {
           "name": "Duração",
@@ -105,7 +105,7 @@
       "fields": {
         "repository": {
           "name": "Repositório",
-          "description": "O identificador do painel: owner/repo, ou app:<slug> para uma aplicação."
+          "description": "O identificador do painel: owner/repo, ou app:slug para uma aplicação."
         }
       }
     },
@@ -115,7 +115,7 @@
       "fields": {
         "repository": {
           "name": "Repositório",
-          "description": "O identificador do painel: owner/repo, ou app:<slug> para uma aplicação."
+          "description": "O identificador do painel: owner/repo, ou app:slug para uma aplicação."
         },
         "used": {
           "name": "Utilizado",

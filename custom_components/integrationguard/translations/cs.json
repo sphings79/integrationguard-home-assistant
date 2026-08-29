@@ -87,7 +87,7 @@
       "fields": {
         "repository": {
           "name": "Repozitář",
-          "description": "Označení z panelu: owner/repo nebo app:<slug> pro aplikaci."
+          "description": "Označení z panelu: owner/repo nebo app:slug pro aplikaci."
         },
         "duration": {
           "name": "Doba",
@@ -105,7 +105,7 @@
       "fields": {
         "repository": {
           "name": "Repozitář",
-          "description": "Označení z panelu: owner/repo nebo app:<slug> pro aplikaci."
+          "description": "Označení z panelu: owner/repo nebo app:slug pro aplikaci."
         }
       }
     },
@@ -115,7 +115,7 @@
       "fields": {
         "repository": {
           "name": "Repozitář",
-          "description": "Označení z panelu: owner/repo nebo app:<slug> pro aplikaci."
+          "description": "Označení z panelu: owner/repo nebo app:slug pro aplikaci."
         },
         "used": {
           "name": "Používané",
