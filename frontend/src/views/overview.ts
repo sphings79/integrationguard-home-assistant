@@ -70,7 +70,14 @@ export function renderOverview(ctx: Ctx): TemplateResult {
       [status, visible.filter((item) => item.status === status).length] as const,
   ).filter(([, count]) => count > 0);
 
-  const errors = Object.keys(data.scan.errors);
+  const errors = Object.entries(data.scan.errors);
+  // t() hands back the key when it knows no sentence for it. Anything the
+  // catalogue does not cover is shown as it came out of the backend.
+  const errorText = ([key, detail]: [string, string]) => {
+    const full = `overview.error.${key}`;
+    const text = t(full);
+    return text === full ? `${key}: ${detail}` : text;
+  };
 
   return html`
     <div class="card">
@@ -129,8 +136,8 @@ export function renderOverview(ctx: Ctx): TemplateResult {
 
       ${errors.length
         ? html`<p class="error">
-            ${t("overview.errors")}:
-            ${errors.map((key) => t(`overview.error.${key}`) || key).join(" ")}
+            ${t("overview.errors")}
+            ${errors.map((entry) => html`<br />${errorText(entry)}`)}
           </p>`
         : nothing}
       ${data.scan.has_token

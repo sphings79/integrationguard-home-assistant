@@ -6,6 +6,33 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-29
+
+### Fixed
+
+- **Apps were reported as unused when they were merely stopped.** On a real
+  installation that was 11 of 31 apps — Tailscale, Cloudflared, the file
+  editor, the SSH terminal: everything you start when you need it. The
+  Supervisor does not say whether an app ever ran, so a stopped app now says
+  nothing about whether anyone wants it. No app is reported as unused any
+  more; the state and the boot setting are still shown.
+- **Every scan reported `https://data-v2.hacs.xyz/app/data.json: HTTP 404`.**
+  Apps have no push date from the Supervisor, which put them in the queue for
+  the HACS store index — where there is no `app` category. The store is only
+  asked about the categories it actually has.
+- **An error without a translated sentence showed the raw key** glued to a
+  prefix. Anything the catalogue does not cover is now shown as it came out
+  of the backend, on its own line.
+
+### Changed
+
+- The GitHub token setting carries a link straight to the token page, and
+  says the two things that are easy to get wrong: set the expiry to never,
+  and tick no permission at all. GitHub grants every token read access to
+  public repositories; nothing beyond that is used.
+- Links in the panel follow the theme colour instead of the browser default,
+  which was close to unreadable on a dark theme.
+
 ## [0.1.0] - 2026-08-29
 
 First release.
@@ -38,5 +65,6 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.1
 [0.1.0]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.0

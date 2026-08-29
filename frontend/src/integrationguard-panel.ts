@@ -263,6 +263,10 @@ export class IntegrationGuardPanel extends LitElement {
       a.ghost {
         text-decoration: none;
       }
+      /* The browser default is unreadable on a dark theme. */
+      a {
+        color: var(--primary-color);
+      }
       input,
       select,
       textarea {

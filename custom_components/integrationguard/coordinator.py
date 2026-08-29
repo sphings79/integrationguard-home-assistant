@@ -19,6 +19,7 @@ from .const import (
     CONF_GITHUB_TOKEN,
     EVENT_SCAN_COMPLETED,
     EVENT_STATUS_CHANGED,
+    HACS_CATEGORIES,
     HASSIO_DOMAIN,
     SIGNAL_UPDATED,
     STARTUP_DELAY_SECONDS,
@@ -306,10 +307,15 @@ class IntegrationGuardCoordinator:
         """Fill in everything HACS itself could not tell us."""
         await self.store_data.async_refresh_lists()
 
+        # Only HACS has a store index. Apps never have a push date from the
+        # Supervisor, so without this they would ask for a category endpoint
+        # that does not exist.
         missing = {
             info.category
             for info in infos
-            if info.last_push is None and info.is_default_store
+            if info.last_push is None
+            and info.is_default_store
+            and info.category in HACS_CATEGORIES
         }
         if missing:
             await self.store_data.async_refresh_categories(
@@ -318,6 +324,8 @@ class IntegrationGuardCoordinator:
 
         fetched = dt_util.utcnow().isoformat()
         for info in infos:
+            if info.category not in HACS_CATEGORIES:
+                continue
             info.removed_from_hacs = self.store_data.is_removed(info.full_name)
             info.critical = self.store_data.is_critical(info.full_name)
             self._apply_store_entry(info, fetched)

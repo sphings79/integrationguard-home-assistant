@@ -1,4 +1,4 @@
-import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j as x,k as O,m as N,n as q,r as m,a as W,E as I,f as T,b as j,l as F,t as P}from"./integrationguard-shared.js";class D{constructor(e){this.hass=e}update(e){this.hass=e}get(){return this.hass.callWS({type:"integrationguard/get"})}scan(e=!1){return this.hass.callWS({type:"integrationguard/scan",force:e})}saveSettings(e,a){const i={type:"integrationguard/settings/save",settings:e};return a!==void 0&&(i.github_token=a),this.hass.callWS(i)}saveRules(e){return this.hass.callWS({type:"integrationguard/rules/save",rules:e})}saveSeverities(e){return this.hass.callWS({type:"integrationguard/severities/save",severities:e})}saveChannel(e){return this.hass.callWS({type:"integrationguard/channels/save",channel:e})}deleteChannel(e){return this.hass.callWS({type:"integrationguard/channels/delete",channel_id:e})}testChannel(e){return this.hass.callWS({type:"integrationguard/channels/test",channel:e})}ignore(e,a,i=null,l=""){return this.hass.callWS({type:"integrationguard/ignore",key:e,ignored:a,until:i,reason:l})}markUsed(e,a){return this.hass.callWS({type:"integrationguard/mark_used",key:e,used:a})}history(e){return this.hass.callWS({type:"integrationguard/history",...e})}}const L=z`
+import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j as z,k as N,m as W,n as R,r as m,a as I,E as F,f as L,b as P,l as j,t as D}from"./integrationguard-shared.js";class H{constructor(e){this.hass=e}update(e){this.hass=e}get(){return this.hass.callWS({type:"integrationguard/get"})}scan(e=!1){return this.hass.callWS({type:"integrationguard/scan",force:e})}saveSettings(e,a){const i={type:"integrationguard/settings/save",settings:e};return a!==void 0&&(i.github_token=a),this.hass.callWS(i)}saveRules(e){return this.hass.callWS({type:"integrationguard/rules/save",rules:e})}saveSeverities(e){return this.hass.callWS({type:"integrationguard/severities/save",severities:e})}saveChannel(e){return this.hass.callWS({type:"integrationguard/channels/save",channel:e})}deleteChannel(e){return this.hass.callWS({type:"integrationguard/channels/delete",channel_id:e})}testChannel(e){return this.hass.callWS({type:"integrationguard/channels/test",channel:e})}ignore(e,a,i=null,l=""){return this.hass.callWS({type:"integrationguard/ignore",key:e,ignored:a,until:i,reason:l})}markUsed(e,a){return this.hass.callWS({type:"integrationguard/mark_used",key:e,used:a})}history(e){return this.hass.callWS({type:"integrationguard/history",...e})}}const G=U`
   :host {
     --ig-gap: 16px;
     --ig-radius: var(--ha-card-border-radius, 12px);
@@ -258,7 +258,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
     font-size: 0.875rem;
     margin: 8px 0 0;
   }
-`,H="__unchanged__";function U(s,e){const a={};for(const i of e)i.default!==void 0&&(a[i.key]=i.default);return{id:"",name:"",kind:s,enabled:!0,config:a,title_template:"",template:""}}function G(s,e,a,i){const{t:l}=s,r=e.config[a.key],t=p=>i({config:{...e.config,[a.key]:p}}),o=n`<span
+`,K="__unchanged__";function E(s,e){const a={};for(const i of e)i.default!==void 0&&(a[i.key]=i.default);return{id:"",name:"",kind:s,enabled:!0,config:a,title_template:"",template:""}}function B(s,e,a,i){const{t:l}=s,r=e.config[a.key],t=p=>i({config:{...e.config,[a.key]:p}}),o=n`<span
     >${l(`field.${a.key}`)}${a.required?" *":""}</span
   >`;if(a.type==="select")return n`<label class="field">
       ${o}
@@ -282,8 +282,8 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       .value=${r==null?"":String(r)}
       @change=${p=>{const u=p.target.value;t(a.type==="number"?Number(u):u)}}
     />
-    ${h&&r===H?n`<span class="hint">${l("channels.secret_kept")}</span>`:c}
-  </label>`}function B(s,e){const{t:a,data:i}=s,l=i.channel_fields[e.kind]??[],r=t=>s.patchUi({editingChannel:{...e,...t}});return n`
+    ${h&&r===K?n`<span class="hint">${l("channels.secret_kept")}</span>`:c}
+  </label>`}function M(s,e){const{t:a,data:i}=s,l=i.channel_fields[e.kind]??[],r=t=>s.patchUi({editingChannel:{...e,...t}});return n`
     <div class="card">
       <h2>${e.id?e.name||a("channels.name"):a("channels.add")}</h2>
       <div class="row wrap">
@@ -298,7 +298,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
         <label class="field">
           <span>${a("channels.kind")}</span>
           <select
-            @change=${t=>{const o=t.target.value;s.patchUi({editingChannel:{...U(o,i.channel_fields[o]??[]),id:e.id,name:e.name}})}}
+            @change=${t=>{const o=t.target.value;s.patchUi({editingChannel:{...E(o,i.channel_fields[o]??[]),id:e.id,name:e.name}})}}
           >
             ${Object.keys(i.channel_fields).map(t=>n`<option value=${t} ?selected=${t===e.kind}>
                   ${a(`kind.${t}`)}
@@ -316,7 +316,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       </div>
 
       <div class="row wrap">
-        ${l.map(t=>G(s,e,t,r))}
+        ${l.map(t=>B(s,e,t,r))}
       </div>
 
       <h3>${a("channels.templates")}</h3>
@@ -358,7 +358,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
             </button>`:c}
       </div>
     </div>
-  `}function K(s){const{t:e,data:a,ui:i}=s;return i.editingChannel?B(s,i.editingChannel):n`
+  `}function V(s){const{t:e,data:a,ui:i}=s;return i.editingChannel?M(s,i.editingChannel):n`
     <div class="card">
       <h2>${e("tab.channels")}</h2>
       <p class="hint">${e("channels.description")}</p>
@@ -381,13 +381,13 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       <div class="row actions">
         <button
           class="primary"
-          @click=${()=>s.patchUi({editingChannel:U("ha_service",a.channel_fields.ha_service??[])})}
+          @click=${()=>s.patchUi({editingChannel:E("ha_service",a.channel_fields.ha_service??[])})}
         >
           ${e("channels.add")}
         </button>
       </div>
     </div>
-  `}function M(s){const{t:e,ui:a}=s;return a.history===null?(s.loadHistory(),n`<div class="card"><p class="empty">${e("common.loading")}</p></div>`):n`
+  `}function J(s){const{t:e,ui:a}=s;return a.history===null?(s.loadHistory(),n`<div class="card"><p class="empty">${e("common.loading")}</p></div>`):n`
     <div class="card">
       <h2>${e("tab.history")}</h2>
       <p class="hint">${e("history.description")}</p>
@@ -410,17 +410,17 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
                   <div class="grow">
                     <div class="name">${i.name||i.key}</div>
                     <div class="sub">
-                      ${_(i.ts,s.language)} ·
+                      ${k(i.ts,s.language)} ·
                       ${e(`history.kind.${i.kind}`)} ·
                       ${i.previous?e("history.changed",{previous:e(`status.${i.previous}`)||i.previous,status:e(`status.${i.status}`)||i.status}):e("history.appeared",{status:e(`status.${i.status}`)||i.status})}
                     </div>
                   </div>
-                  ${i.kind==="status"?f(e,i.status):n`<span class="chip">${e(`runtime.${i.status}`)}</span>`}
+                  ${i.kind==="status"?_(e,i.status):n`<span class="chip">${e(`runtime.${i.status}`)}</span>`}
                 </div>
               `)}
           </div>`}
     </div>
-  `}function V(s){const e=s??0,a=e>=90?b.healthy:e>=70?b.stale:b.abandoned,i=2*Math.PI*34,l=i*e/100;return n`
+  `}function Y(s){const e=s??0,a=e>=90?v.healthy:e>=70?v.stale:v.abandoned,i=2*Math.PI*34,l=i*e/100;return n`
     <svg viewBox="0 0 80 80" class="ring" role="img" aria-label="${e}">
       <circle
         cx="40"
@@ -452,15 +452,15 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       </div>
       <div class="tile-label">${s}</div>
     </div>
-  `}function J(s){const{t:e,data:a}=s,i=a.repositories.filter(d=>!d.ignored),l=i.filter(d=>d.status!=="healthy"),r=i.filter(d=>d.usage==="unused"),t=a.runtime.filter(d=>d.problem),o=a.runtime.reduce((d,v)=>d+v.repairs.length,0),h=[...l].sort((d,v)=>d.score-v.score).slice(0,8),p=C.map(d=>[d,i.filter(v=>v.status===d).length]).filter(([,d])=>d>0),u=Object.keys(a.scan.errors);return n`
+  `}function X(s){const{t:e,data:a}=s,i=a.repositories.filter(d=>!d.ignored),l=i.filter(d=>d.status!=="healthy"),r=i.filter(d=>d.usage==="unused"),t=a.runtime.filter(d=>d.problem),o=a.runtime.reduce((d,g)=>d+g.repairs.length,0),h=[...l].sort((d,g)=>d.score-g.score).slice(0,8),p=A.map(d=>[d,i.filter(g=>g.status===d).length]).filter(([,d])=>d>0),u=Object.entries(a.scan.errors),f=([d,g])=>{const w=`overview.error.${d}`,S=e(w);return S===w?`${d}: ${g}`:S};return n`
     <div class="card">
       <div class="row wrap head">
-        ${V(a.scan.score)}
+        ${Y(a.scan.score)}
         <div class="tiles">
           ${y(e("overview.repositories"),i.length)}
-          ${y(e("overview.problems"),l.length,l.length?b.stale:void 0)}
-          ${y(e("overview.unused"),r.length,r.length?b.stale:void 0)}
-          ${y(e("overview.runtime"),t.length,t.length?b.abandoned:void 0)}
+          ${y(e("overview.problems"),l.length,l.length?v.stale:void 0)}
+          ${y(e("overview.unused"),r.length,r.length?v.stale:void 0)}
+          ${y(e("overview.runtime"),t.length,t.length?v.abandoned:void 0)}
           ${y(e("overview.repairs"),o)}
         </div>
         <div class="spacer"></div>
@@ -474,24 +474,24 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
           </button>
           <p class="hint">
             ${e("overview.last_scan")}:
-            ${a.scan.last?_(a.scan.last,s.language):e("common.never")}
+            ${a.scan.last?k(a.scan.last,s.language):e("common.never")}
           </p>
         </div>
       </div>
 
       ${p.length?n`<div class="bar">
-            ${p.map(([d,v])=>n`
+            ${p.map(([d,g])=>n`
                 <div
                   class="bar-part"
-                  style="flex:${v};background:${b[d]}"
-                  title="${e(`status.${d}`)}: ${v}"
+                  style="flex:${g};background:${v[d]}"
+                  title="${e(`status.${d}`)}: ${g}"
                 ></div>
               `)}
           </div>`:c}
 
       ${u.length?n`<p class="error">
-            ${e("overview.errors")}:
-            ${u.map(d=>e(`overview.error.${d}`)||d).join(" ")}
+            ${e("overview.errors")}
+            ${u.map(d=>n`<br />${f(d)}`)}
           </p>`:c}
       ${a.scan.has_token?c:n`<p class="hint">${e("overview.no_token")}</p>`}
       ${a.scan.github_pending?n`<p class="hint">
@@ -515,12 +515,12 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
                       <div class="sub">${d.key}</div>
                     </div>
                     <span class="score">${d.score}</span>
-                    ${f(e,d.status)}
+                    ${_(e,d.status)}
                   </div>
                 `)}
             </div>`:n`<p class="empty">${e("overview.never_scanned")}</p>`}
     </div>
-  `}const Y=["used","unused","undetermined","not_registered","not_checked"];function X(s,e){const{t:a}=s,i=E(e.last_push);return n`
+  `}const Q=["used","unused","undetermined","not_registered","not_checked"];function Z(s,e){const{t:a}=s,i=T(e.last_push);return n`
     <div class="card">
       <div class="row wrap">
         <button class="ghost" @click=${()=>s.patchUi({selected:null})}>
@@ -538,7 +538,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       ${e.description?n`<p>${e.description}</p>`:c}
 
       <div class="row wrap chips">
-        ${f(a,e.status)} ${k(a,e.usage)}
+        ${_(a,e.status)} ${x(a,e.usage)}
         ${e.usage_confidence?n`<span class="chip"
               >${a(`confidence.${e.usage_confidence}`)}</span
             >`:c}
@@ -561,13 +561,13 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
         <div>
           <span>${a("repo.last_push")}</span>
           <b>
-            ${x(e.last_push,s.language)}
+            ${z(e.last_push,s.language)}
             ${i===null?"":` (${i} ${a("common.days")})`}
           </b>
         </div>
         <div>
           <span>${a("repo.last_release")}</span
-          ><b>${x(e.last_release_at,s.language)}</b>
+          ><b>${z(e.last_release_at,s.language)}</b>
         </div>
         <div><span>${a("repo.stars")}</span><b>${e.stars??"—"}</b></div>
         <div>
@@ -588,7 +588,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       <h3>${a("repo.findings")}</h3>
       ${e.findings.length===0?n`<p class="empty">${a("repo.no_findings")}</p>`:n`<ul class="findings">
             ${e.findings.map(l=>n`<li>
-                ${O(a,l)}
+                ${N(a,l)}
                 <span class="penalty">−${l.penalty}</span>
               </li>`)}
           </ul>`}
@@ -604,7 +604,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
         </button>
       </div>
     </div>
-  `}function Q(s){const{t:e,data:a,ui:i}=s;if(i.selected){const r=a.repositories.find(t=>t.key===i.selected);if(r)return X(s,r)}const l=R(i,a.repositories);return n`
+  `}function ee(s){const{t:e,data:a,ui:i}=s;if(i.selected){const r=a.repositories.find(t=>t.key===i.selected);if(r)return Z(s,r)}const l=O(i,a.repositories);return n`
     <div class="card">
       <div class="row wrap filters">
         <input
@@ -626,7 +626,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
           @change=${r=>s.patchUi({status:r.target.value})}
         >
           <option value="">${e("repo.status")}: ${e("common.all")}</option>
-          ${C.map(r=>n`<option value=${r} ?selected=${i.status===r}>
+          ${A.map(r=>n`<option value=${r} ?selected=${i.status===r}>
                 ${e(`status.${r}`)}
               </option>`)}
         </select>
@@ -634,7 +634,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
           @change=${r=>s.patchUi({usage:r.target.value})}
         >
           <option value="">${e("repo.usage")}: ${e("common.all")}</option>
-          ${Y.map(r=>n`<option value=${r} ?selected=${i.usage===r}>
+          ${Q.map(r=>n`<option value=${r} ?selected=${i.usage===r}>
                 ${e(`usage.${r}`)}
               </option>`)}
         </select>
@@ -672,13 +672,13 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
                     </div>
                   </div>
                   <span class="score">${r.score}</span>
-                  ${r.usage==="unused"||r.usage==="not_registered"?k(e,r.usage):c}
-                  ${f(e,r.status)}
+                  ${r.usage==="unused"||r.usage==="not_registered"?x(e,r.usage):c}
+                  ${_(e,r.status)}
                 </div>
               `)}
           </div>`}
     </div>
-  `}function Z(s){const{t:e,data:a}=s,i=new Map(a.rules.map(t=>[t.id,t])),l=(t,o)=>{const h=a.rules.map(p=>p.id===t?{...p,...o}:p);s.saveRules(h)},r=()=>{s.saveRules(a.rule_catalogue.map(t=>({id:t.id,enabled:!0,severity_id:t.default_severity,penalty:t.default_penalty,threshold:t.default_threshold})))};return n`
+  `}function se(s){const{t:e,data:a}=s,i=new Map(a.rules.map(t=>[t.id,t])),l=(t,o)=>{const h=a.rules.map(p=>p.id===t?{...p,...o}:p);s.saveRules(h)},r=()=>{s.saveRules(a.rule_catalogue.map(t=>({id:t.id,enabled:!0,severity_id:t.default_severity,penalty:t.default_penalty,threshold:t.default_threshold})))};return n`
     <div class="card">
       <h2>${e("tab.rules")}</h2>
       <p class="hint">${e("rules.description")}</p>
@@ -757,8 +757,8 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       </div>
     </div>
 
-    ${ee(s)}
-  `}function ee(s){const{t:e,data:a}=s,i=(l,r)=>s.saveSeverities(a.severities.map(t=>t.id===l?{...t,...r}:t));return n`
+    ${ae(s)}
+  `}function ae(s){const{t:e,data:a}=s,i=(l,r)=>s.saveSeverities(a.severities.map(t=>t.id===l?{...t,...r}:t));return n`
     <div class="card">
       <h2>${e("severities.title")}</h2>
       <p class="hint">${e("severities.description")}</p>
@@ -821,13 +821,13 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
           `)}
       </div>
     </div>
-  `}function se(s,e){return e?"var(--secondary-text-color)":s==="ok"?b.stale:b.abandoned}function ae(s){const{t:e,data:a}=s,i=a.runtime.filter(t=>t.problem),l=a.runtime.filter(t=>!t.problem&&t.state!=="ok"),r=(t,o)=>n`
+  `}function te(s,e){return e?"var(--secondary-text-color)":s==="ok"?v.stale:v.abandoned}function ie(s){const{t:e,data:a}=s,i=a.runtime.filter(t=>t.problem),l=a.runtime.filter(t=>!t.problem&&t.state!=="ok"),r=(t,o)=>n`
     <div class="list-item">
       <div class="grow">
         <div class="name">${t.title||t.domain}</div>
         <div class="sub">
           ${t.domain} · ${e(`runtime.${t.state}`)}
-          ${t.since?` · ${e("runtime.since",{time:_(t.since,s.language)})}`:""}
+          ${t.since?` · ${e("runtime.since",{time:k(t.since,s.language)})}`:""}
           ${o?` · ${e("runtime.waiting")}`:""}
         </div>
         ${t.reason?n`<div class="sub reason">${t.reason}</div>`:c}
@@ -845,7 +845,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
           >`:c}
       <span
         class="badge solid"
-        style="background:${se(t.state,o)}"
+        style="background:${te(t.state,o)}"
         >${e(`runtime.${t.state}`)}</span
       >
     </div>
@@ -857,7 +857,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
             ${l.map(t=>r(t,!0))}
           </div>`}
     </div>
-  `}const te=[1,3,6,12,24,48,168],w=[0,1,2,3,4,5,6];function ie(s){const{t:e,data:a}=s,i=a.settings,l=t=>s.saveSettings({...i,...t}),r=(t,o,h)=>n`
+  `}const ne=[1,3,6,12,24,48,168],re="https://github.com/settings/personal-access-tokens/new",C=[0,1,2,3,4,5,6];function le(s){const{t:e,data:a}=s,i=a.settings,l=t=>s.saveSettings({...i,...t}),r=(t,o,h)=>n`
     <div class="field wide">
       <span>${t}</span>
       <div class="row wrap">
@@ -867,7 +867,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
                 type="checkbox"
                 .checked=${o.includes(p)}
                 ?disabled=${s.busy}
-                @change=${u=>{const v=u.target.checked?[...o,p]:o.filter(A=>A!==p);l({[h]:v})}}
+                @change=${u=>{const d=u.target.checked?[...o,p]:o.filter(g=>g!==p);l({[h]:d})}}
               />
               ${e(`category.${p}`)}
             </label>
@@ -884,7 +884,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
             ?disabled=${s.busy}
             @change=${t=>l({scan_interval_hours:Number(t.target.value)})}
           >
-            ${te.map(t=>n`
+            ${ne.map(t=>n`
                 <option
                   value=${t}
                   ?selected=${i.scan_interval_hours===t}
@@ -921,6 +921,11 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
     <div class="card">
       <h2>${e("settings.github")}</h2>
       <p class="hint">${e("settings.github_token_hint")}</p>
+      <p>
+        <a href=${re} target="_blank" rel="noreferrer"
+          >${e("settings.github_token_link")}</a
+        >
+      </p>
       ${a.scan.has_token?n`<p class="hint">${e("settings.github_token_set")}</p>`:c}
       <label class="field wide">
         <span>${e("settings.github_token")}</span>
@@ -1015,13 +1020,13 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       <div class="field wide">
         <span>${e("settings.quiet_weekdays")}</span>
         <div class="row wrap">
-          ${w.map(t=>n`
+          ${C.map(t=>n`
               <label class="checkbox">
                 <input
                   type="checkbox"
                   .checked=${i.quiet_hours.weekdays.length===0||i.quiet_hours.weekdays.includes(t)}
                   ?disabled=${s.busy||!i.quiet_hours.enabled}
-                  @change=${o=>{const h=o.target.checked,p=i.quiet_hours.weekdays.length===0?[...w]:i.quiet_hours.weekdays,u=h?[...new Set([...p,t])].sort():p.filter(d=>d!==t);l({quiet_hours:{...i.quiet_hours,weekdays:u}})}}
+                  @change=${o=>{const h=o.target.checked,p=i.quiet_hours.weekdays.length===0?[...C]:i.quiet_hours.weekdays,u=h?[...new Set([...p,t])].sort():p.filter(f=>f!==t);l({quiet_hours:{...i.quiet_hours,weekdays:u}})}}
                 />
                 ${e(`weekday.${t}`)}
               </label>
@@ -1057,7 +1062,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
             <option value="auto" ?selected=${i.ui_language==="auto"}>
               ${e("settings.language_auto")}
             </option>
-            ${N.map(t=>n`<option value=${t} ?selected=${i.ui_language===t}>
+            ${W.map(t=>n`<option value=${t} ?selected=${i.ui_language===t}>
                   ${t}
                 </option>`)}
           </select>
@@ -1077,7 +1082,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
         </label>
       </div>
     </div>
-  `}function S(s,e){const{t:a}=s;return n`<div class="list">
+  `}function q(s,e){const{t:a}=s;return n`<div class="list">
     ${e.map(i=>n`
         <div
           class="list-item clickable"
@@ -1090,21 +1095,21 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
               ${i.usage_confidence?` · ${a(`confidence.${i.usage_confidence}`)}`:""}
             </div>
           </div>
-          ${k(a,i.usage)}
+          ${x(a,i.usage)}
         </div>
       `)}
-  </div>`}function ne(s){const{t:e,data:a}=s,i=a.repositories.filter(o=>!o.ignored),l=i.filter(o=>o.usage==="unused"||o.usage==="not_registered"),r=i.filter(o=>o.usage==="undetermined"),t=l.some(o=>{const h=o.usage_detail?.uncertain_dashboards;return h&&Object.keys(h).length>0});return n`
+  </div>`}function oe(s){const{t:e,data:a}=s,i=a.repositories.filter(o=>!o.ignored),l=i.filter(o=>o.usage==="unused"||o.usage==="not_registered"),r=i.filter(o=>o.usage==="undetermined"),t=l.some(o=>{const h=o.usage_detail?.uncertain_dashboards;return h&&Object.keys(h).length>0});return n`
     <div class="card">
       <h2>${e("unused.title")}</h2>
       <p class="hint">${e("unused.description")}</p>
       ${t?n`<p class="hint">${e("unused.uncertain")}</p>`:c}
-      ${l.length===0?n`<p class="empty">${e("unused.none")}</p>`:S(s,l)}
+      ${l.length===0?n`<p class="empty">${e("unused.none")}</p>`:q(s,l)}
     </div>
 
     ${r.length?n`<div class="card">
           <h2>${e("unused.undetermined_title")}</h2>
           <p class="hint">${e("unused.undetermined_description")}</p>
-          ${S(s,r)}
+          ${q(s,r)}
         </div>`:c}
 
     ${a.settings.check_orphans?n`<div class="card">
@@ -1122,7 +1127,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
                   `)}
               </div>`}
         </div>`:c}
-  `}var re=Object.defineProperty,le=Object.getOwnPropertyDescriptor,$=(s,e,a,i)=>{for(var l=i>1?void 0:i?le(e,a):e,r=s.length-1,t;r>=0;r--)(t=s[r])&&(l=(i?t(e,a,l):t(l))||l);return i&&l&&re(e,a,l),l};const oe=["rules","channels","settings"];let g=class extends W{constructor(){super(...arguments),this.narrow=!1,this.data=null,this.tab="overview",this.busy=!1,this.message="",this.ui={...I},this.localizeFn=T,this.api=null,this.catalogueFor=""}get isAdmin(){return this.hass?.user?.is_admin??!1}willUpdate(){this.hass&&(this.api?this.api.update(this.hass):(this.api=new D(this.hass),this.load()),this.syncCatalogue())}get language(){const s=this.data?.settings.ui_language;return s&&s!=="auto"?s:this.hass?.language||"en"}async syncCatalogue(){const s=this.language;s!==this.catalogueFor&&(this.catalogueFor=s,this.localizeFn=j(await F(s)))}async load(){if(this.api)try{this.data=await this.api.get()}catch(s){this.message=String(s?.message??s)}}async run(s,e){if(!this.busy){this.busy=!0;try{await s(),e&&this.toast(e)}catch(a){this.toast(String(a?.message??this.localizeFn("common.error")))}finally{this.busy=!1,await this.load()}}}toast(s){this.message=s,window.setTimeout(()=>{this.message===s&&(this.message="")},4e3)}context(){const s=this.localizeFn;return{t:s,data:this.data,language:this.language,busy:this.busy,ui:this.ui,patchUi:e=>{this.ui={...this.ui,...e}},scan:(e=!1)=>void this.run(()=>this.api.scan(e)),saveSettings:(e,a)=>void this.run(()=>this.api.saveSettings(e,a),s("common.saved")),saveRules:e=>void this.run(()=>this.api.saveRules(e),s("common.saved")),saveSeverities:e=>void this.run(()=>this.api.saveSeverities(e),s("common.saved")),saveChannel:e=>void this.run(async()=>{await this.api.saveChannel(e),this.ui={...this.ui,editingChannel:null}},s("common.saved")),deleteChannel:e=>void this.run(async()=>{await this.api.deleteChannel(e),this.ui={...this.ui,editingChannel:null}}),testChannel:e=>void this.run(()=>this.api.testChannel(e),s("channels.test_ok")),ignore:(e,a)=>void this.run(()=>this.api.ignore(e,a)),markUsed:(e,a)=>void this.run(()=>this.api.markUsed(e,a)),loadHistory:()=>void this.fetchHistory(),toast:e=>this.toast(e)}}async fetchHistory(){if(!(!this.api||this.ui.history!==null)){this.ui={...this.ui,history:[]};try{const s=await this.api.history({limit:200,kind:this.ui.historyKind||null});this.ui={...this.ui,history:s.events}}catch{this.ui={...this.ui,history:[]}}}}tabs(){const s=this.data,e=s?.repositories.filter(i=>!i.ignored)??[],a=[["overview","tab.overview",null],["repositories","tab.repositories",e.length],["unused","tab.unused",e.filter(i=>i.usage==="unused"||i.usage==="not_registered").length],["runtime","tab.runtime",(s?.runtime??[]).filter(i=>i.problem).length],["rules","tab.rules",null],["channels","tab.channels",null],["history","tab.history",null],["settings","tab.settings",null]];return this.isAdmin?a:a.filter(([i])=>!oe.includes(i))}body(){const s=this.context();switch(this.tab){case"repositories":return Q(s);case"unused":return ne(s);case"runtime":return ae(s);case"rules":return Z(s);case"channels":return K(s);case"history":return M(s);case"settings":return ie(s);default:return J(s)}}render(){const s=this.localizeFn;return this.data?n`
+  `}var ce=Object.defineProperty,de=Object.getOwnPropertyDescriptor,$=(s,e,a,i)=>{for(var l=i>1?void 0:i?de(e,a):e,r=s.length-1,t;r>=0;r--)(t=s[r])&&(l=(i?t(e,a,l):t(l))||l);return i&&l&&ce(e,a,l),l};const pe=["rules","channels","settings"];let b=class extends I{constructor(){super(...arguments),this.narrow=!1,this.data=null,this.tab="overview",this.busy=!1,this.message="",this.ui={...F},this.localizeFn=L,this.api=null,this.catalogueFor=""}get isAdmin(){return this.hass?.user?.is_admin??!1}willUpdate(){this.hass&&(this.api?this.api.update(this.hass):(this.api=new H(this.hass),this.load()),this.syncCatalogue())}get language(){const s=this.data?.settings.ui_language;return s&&s!=="auto"?s:this.hass?.language||"en"}async syncCatalogue(){const s=this.language;s!==this.catalogueFor&&(this.catalogueFor=s,this.localizeFn=P(await j(s)))}async load(){if(this.api)try{this.data=await this.api.get()}catch(s){this.message=String(s?.message??s)}}async run(s,e){if(!this.busy){this.busy=!0;try{await s(),e&&this.toast(e)}catch(a){this.toast(String(a?.message??this.localizeFn("common.error")))}finally{this.busy=!1,await this.load()}}}toast(s){this.message=s,window.setTimeout(()=>{this.message===s&&(this.message="")},4e3)}context(){const s=this.localizeFn;return{t:s,data:this.data,language:this.language,busy:this.busy,ui:this.ui,patchUi:e=>{this.ui={...this.ui,...e}},scan:(e=!1)=>void this.run(()=>this.api.scan(e)),saveSettings:(e,a)=>void this.run(()=>this.api.saveSettings(e,a),s("common.saved")),saveRules:e=>void this.run(()=>this.api.saveRules(e),s("common.saved")),saveSeverities:e=>void this.run(()=>this.api.saveSeverities(e),s("common.saved")),saveChannel:e=>void this.run(async()=>{await this.api.saveChannel(e),this.ui={...this.ui,editingChannel:null}},s("common.saved")),deleteChannel:e=>void this.run(async()=>{await this.api.deleteChannel(e),this.ui={...this.ui,editingChannel:null}}),testChannel:e=>void this.run(()=>this.api.testChannel(e),s("channels.test_ok")),ignore:(e,a)=>void this.run(()=>this.api.ignore(e,a)),markUsed:(e,a)=>void this.run(()=>this.api.markUsed(e,a)),loadHistory:()=>void this.fetchHistory(),toast:e=>this.toast(e)}}async fetchHistory(){if(!(!this.api||this.ui.history!==null)){this.ui={...this.ui,history:[]};try{const s=await this.api.history({limit:200,kind:this.ui.historyKind||null});this.ui={...this.ui,history:s.events}}catch{this.ui={...this.ui,history:[]}}}}tabs(){const s=this.data,e=s?.repositories.filter(i=>!i.ignored)??[],a=[["overview","tab.overview",null],["repositories","tab.repositories",e.length],["unused","tab.unused",e.filter(i=>i.usage==="unused"||i.usage==="not_registered").length],["runtime","tab.runtime",(s?.runtime??[]).filter(i=>i.problem).length],["rules","tab.rules",null],["channels","tab.channels",null],["history","tab.history",null],["settings","tab.settings",null]];return this.isAdmin?a:a.filter(([i])=>!pe.includes(i))}body(){const s=this.context();switch(this.tab){case"repositories":return ee(s);case"unused":return oe(s);case"runtime":return ie(s);case"rules":return se(s);case"channels":return V(s);case"history":return J(s);case"settings":return le(s);default:return X(s)}}render(){const s=this.localizeFn;return this.data?n`
       <header>
         <h1>IntegrationGuard</h1>
       </header>
@@ -1139,7 +1144,7 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       </nav>
       ${this.body()}
       ${this.message?n`<div class="toast">${this.message}</div>`:c}
-    `:n`<div class="card"><p class="empty">${s("common.loading")}</p></div>`}};g.styles=[L,z`
+    `:n`<div class="card"><p class="empty">${s("common.loading")}</p></div>`}};b.styles=[G,U`
       :host {
         display: block;
         padding: 16px;
@@ -1353,6 +1358,10 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
       a.ghost {
         text-decoration: none;
       }
+      /* The browser default is unreadable on a dark theme. */
+      a {
+        color: var(--primary-color);
+      }
       input,
       select,
       textarea {
@@ -1390,4 +1399,4 @@ import{i as z,c as n,A as c,e as _,s as f,S as C,d as b,g as R,u as k,h as E,j a
         opacity: 0.5;
         cursor: default;
       }
-    `];$([q({attribute:!1})],g.prototype,"hass",2);$([q({type:Boolean})],g.prototype,"narrow",2);$([m()],g.prototype,"data",2);$([m()],g.prototype,"tab",2);$([m()],g.prototype,"busy",2);$([m()],g.prototype,"message",2);$([m()],g.prototype,"ui",2);$([m()],g.prototype,"localizeFn",2);g=$([P("integrationguard-panel")],g);
+    `];$([R({attribute:!1})],b.prototype,"hass",2);$([R({type:Boolean})],b.prototype,"narrow",2);$([m()],b.prototype,"data",2);$([m()],b.prototype,"tab",2);$([m()],b.prototype,"busy",2);$([m()],b.prototype,"message",2);$([m()],b.prototype,"ui",2);$([m()],b.prototype,"localizeFn",2);b=$([D("integrationguard-panel")],b);

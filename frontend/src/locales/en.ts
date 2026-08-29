@@ -256,7 +256,8 @@ export const en: Record<string, string> = {
   "settings.github": "GitHub",
   "settings.github_token": "GitHub token",
   "settings.github_token_hint":
-    "Optional. Without one GitHub allows 60 requests an hour, with one 5000. It needs no permissions at all — every token can read public repositories.",
+    "Optional. Without one GitHub allows 60 requests an hour, with one 5000. Set the expiry to never, and tick no permission at all — every token may read public repositories.",
+  "settings.github_token_link": "Create a token on GitHub",
   "settings.github_token_set": "A token is stored.",
   "settings.categories": "What to check",
   "settings.categories_health": "Check health of",

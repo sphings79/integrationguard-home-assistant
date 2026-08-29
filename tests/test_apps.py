@@ -146,16 +146,26 @@ def test_a_running_app_is_used():
     assert result.usage == Usage.USED
 
 
-def test_a_stopped_app_that_never_boots_is_unused():
-    result = _evaluate_app(build(state="stopped", boot="manual"))
-    assert result.usage == Usage.UNUSED
+def test_a_stopped_app_is_never_called_unused():
+    """A stopped app says nothing about whether anyone wants it.
 
-
-def test_a_stopped_app_that_should_boot_is_a_runtime_matter():
-    result = _evaluate_app(build(state="stopped", boot="auto"))
-    assert result.usage == Usage.UNDETERMINED
+    Plenty of apps are installed to be started on demand, and the Supervisor
+    does not say whether one ever ran.
+    """
+    for boot in ("manual", "auto"):
+        result = _evaluate_app(build(state="stopped", boot=boot))
+        assert result.usage == Usage.UNDETERMINED
+        assert result.detail["boot"] == boot
 
 
 def test_an_app_in_error_is_not_called_unused():
     result = _evaluate_app(build(state="error"))
     assert result.usage == Usage.UNDETERMINED
+
+
+def test_no_app_is_ever_reported_as_unused():
+    """The usage engine has no way to establish it, so it must not claim it."""
+    for state in ("started", "startup", "stopped", "error", "unknown", None):
+        for boot in ("auto", "manual", None):
+            result = _evaluate_app(build(state=state, boot=boot))
+            assert result.usage != Usage.UNUSED, (state, boot)

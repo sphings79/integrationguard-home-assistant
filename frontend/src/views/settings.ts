@@ -4,6 +4,7 @@ import type { Settings } from "../types";
 import type { Ctx } from "../view";
 
 const INTERVALS = [1, 3, 6, 12, 24, 48, 168];
+const TOKEN_URL = "https://github.com/settings/personal-access-tokens/new";
 const WEEKDAYS = [0, 1, 2, 3, 4, 5, 6];
 
 export function renderSettings(ctx: Ctx): TemplateResult {
@@ -108,6 +109,11 @@ export function renderSettings(ctx: Ctx): TemplateResult {
     <div class="card">
       <h2>${t("settings.github")}</h2>
       <p class="hint">${t("settings.github_token_hint")}</p>
+      <p>
+        <a href=${TOKEN_URL} target="_blank" rel="noreferrer"
+          >${t("settings.github_token_link")}</a
+        >
+      </p>
       ${data.scan.has_token
         ? html`<p class="hint">${t("settings.github_token_set")}</p>`
         : nothing}

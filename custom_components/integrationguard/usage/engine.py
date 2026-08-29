@@ -161,11 +161,10 @@ def _evaluate_app(info: RepositoryInfo) -> UsageResult:
     detail: dict[str, Any] = {"state": info.app_state, "boot": info.app_boot}
     if info.app_state in (AppState.STARTED, AppState.STARTUP):
         return UsageResult(Usage.USED, Confidence.HIGH, detail)
-    if info.app_state == AppState.STOPPED and info.app_boot == "manual":
-        # Installed, not started, and not set to start on boot either.
-        return UsageResult(Usage.UNUSED, Confidence.MEDIUM, detail)
-    # Stopped although it should boot, or in an error state: that is a runtime
-    # question, not a question of whether anyone wants it.
+    # Everything else says nothing about whether anyone wants the app. A
+    # stopped app that does not boot may simply be started on demand, and the
+    # Supervisor does not say whether it ever ran. Stopped although it should
+    # boot is a runtime question, not a usage one.
     return UsageResult(Usage.UNDETERMINED, Confidence.LOW, detail)
 
 
