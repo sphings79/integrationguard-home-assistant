@@ -38,6 +38,7 @@ from .notify.messages import (
     build_recovery_message,
     build_repository_notices,
     collect_changes,
+    repositories_notice_id,
     runtime_notice_id,
 )
 from .runtime.monitor import RuntimeMonitor
@@ -134,7 +135,6 @@ class IntegrationGuardCoordinator:
         await self.history.async_setup()
         await self.history.async_purge(self.config.settings.history_retention_days)
         self.dispatcher.async_start()
-        self._restore_repository_notices()
         await self.runtime.async_start()
         self._unsub_start = async_at_started(self.hass, self._handle_started)
         self._schedule_next()
@@ -157,6 +157,7 @@ class IntegrationGuardCoordinator:
         HACS needs a moment to load its repositories, and a restart is a bad
         time to hammer GitHub.
         """
+        self._tidy_notices()
 
         async def _run(_now: datetime) -> None:
             await self.async_scan()
@@ -248,6 +249,25 @@ class IntegrationGuardCoordinator:
         await self._async_save_state()
 
     @callback
+    def _tidy_notices(self) -> None:
+        """Take stock of the notifications once Home Assistant is up.
+
+        Whatever was brought back after the restart is adopted and brought up
+        to date, and what older versions left behind — one per severity in
+        0.1.6, one per repository in 0.1.7 — is removed.
+        """
+        self.dispatcher.adopt_existing()
+        self._restore_repository_notices()
+        current = {
+            repositories_notice_id(severity.id) for severity in self.config.severities
+        }
+        runtime_prefix = runtime_notice_id("")
+        for notification_id in self.dispatcher.open_ids():
+            if notification_id in current or notification_id.startswith(runtime_prefix):
+                continue
+            self.dispatcher.dismiss(notification_id)
+
+    @callback
     def _restore_repository_notices(self) -> None:
         """Bring back the notifications about repositories a restart took."""
         self._sync_repository_notices(
@@ -264,6 +284,17 @@ class IntegrationGuardCoordinator:
             for domain, info in self.runtime.states.items():
                 if info.problem:
                     self._runtime_announced.setdefault(domain, info.name or domain)
+        if reopen:
+            # Adopt what was brought back after the restart, and drop the
+            # notifications about integrations nobody is waiting on any more.
+            self.dispatcher.adopt_existing()
+            prefix = runtime_notice_id("")
+            for notification_id in self.dispatcher.open_ids():
+                if (
+                    notification_id.startswith(prefix)
+                    and notification_id[len(prefix) :] not in self._runtime_announced
+                ):
+                    self.dispatcher.dismiss(notification_id)
         for domain, name in list(self._runtime_announced.items()):
             info = self.runtime.states.get(domain)
             if info is not None and info.problem:

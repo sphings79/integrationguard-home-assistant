@@ -6,6 +6,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-09-26
+
+### Fixed
+
+- **Notifications that were removed came back after a restart.** With an
+  integration that keeps notifications across restarts, such as Restore
+  Persistent Notification, whatever IntegrationGuard removed reappeared,
+  because it only notices changes made through the notification service,
+  and IntegrationGuard went around it. On one installation the 0.1.7
+  notifications for every single repository were still there after the
+  update to 0.1.8 — 65 in all. Notifications are now created and removed
+  through the service.
+- **What older versions left behind is cleaned up.** Once Home Assistant
+  has started, IntegrationGuard adopts the notifications that were brought
+  back, updates them, and removes the ones 0.1.6 and 0.1.7 created that no
+  longer exist in this form, as well as those about integrations that work
+  again.
+
 ## [0.1.8] - 2026-09-25
 
 ### Fixed
@@ -201,7 +219,8 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.9
 [0.1.8]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.8
 [0.1.7]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.7
 [0.1.6]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.6

@@ -39,18 +39,15 @@ def shown(monkeypatch):
     """Record what would be shown and removed in Home Assistant."""
     calls = {"created": [], "dismissed": []}
 
-    def create(hass, message, title=None, notification_id=None):
-        calls["created"].append((notification_id, title, message))
+    def call(self, service, data):
+        if service == "create":
+            calls["created"].append(
+                (data["notification_id"], data["title"], data["message"])
+            )
+        else:
+            calls["dismissed"].append(data["notification_id"])
 
-    def dismiss(hass, notification_id):
-        calls["dismissed"].append(notification_id)
-
-    monkeypatch.setattr(
-        dispatcher_module.persistent_notification, "async_create", create
-    )
-    monkeypatch.setattr(
-        dispatcher_module.persistent_notification, "async_dismiss", dismiss
-    )
+    monkeypatch.setattr(Dispatcher, "_call", call)
     return calls
 
 
@@ -275,6 +272,7 @@ def test_a_severity_without_notifications_gets_none(config, info, shown):
     config.severity("warning").persistent_notification = False
     dispatcher = Dispatcher(FakeHass(), config)
     notices = build_repository_notices(config, [_health(info, "alpha")], "de")
+    _open(dispatcher, notices["warning"])
     dispatcher.sync_repositories(notices, reopen={"warning"})
     assert shown["created"] == []
     assert repositories_notice_id("warning") in shown["dismissed"]
@@ -293,3 +291,43 @@ def test_info_brings_no_notification_on_a_new_installation():
         "critical": True,
         "security": True,
     }
+
+
+def test_nothing_is_removed_that_is_not_there(config, shown):
+    dispatcher = Dispatcher(FakeHass(), config)
+    dispatcher.sync_repositories({})
+    dispatcher.dismiss(runtime_notice_id("tuya_local"))
+    assert shown["dismissed"] == [], "every call makes restore integrations save"
+
+
+def test_restored_notifications_are_adopted(config, info, shown, monkeypatch):
+    """What another integration brought back is ours to update and remove."""
+    notice = build_repository_notices(config, [_health(info, "alpha")], "de")["warning"]
+    restored = {
+        notice.notification_id: {
+            "notification_id": notice.notification_id,
+            "title": notice.title,
+            "message": notice.body + "<!--- restored -->",
+        },
+        "integrationguard_repository_someone/alpha": {
+            "notification_id": "integrationguard_repository_someone/alpha",
+            "title": "left over",
+            "message": "from 0.1.7",
+        },
+        "somebody_else": {"notification_id": "x", "title": "", "message": ""},
+    }
+    monkeypatch.setattr(
+        dispatcher_module.persistent_notification,
+        "_async_get_or_create_notifications",
+        lambda hass: restored,
+    )
+    dispatcher = Dispatcher(FakeHass(), config)
+    dispatcher.adopt_existing()
+    assert sorted(dispatcher.open_ids()) == sorted(
+        [notice.notification_id, "integrationguard_repository_someone/alpha"]
+    )
+
+    dispatcher.sync_repositories({"warning": notice})
+    [(notification_id, _title, body)] = shown["created"]
+    assert notification_id == notice.notification_id
+    assert "restored" not in body, "the restored copy is brought up to date"

@@ -84,7 +84,8 @@ class Dispatcher:
         self.held_runtime: dict[str, tuple[Message, str]] = {}
         # Our notifications that are still open in Home Assistant, with the
         # title and text they show. Lets one be updated without bringing back
-        # one the user dismissed.
+        # one the user dismissed, and keeps us from removing what is not
+        # there.
         self._open: dict[str, tuple[str | None, str]] = {}
         self._unsub_notices: CALLBACK_TYPE | None = None
 
@@ -101,6 +102,29 @@ class Dispatcher:
         if self._unsub_notices is not None:
             self._unsub_notices()
             self._unsub_notices = None
+
+    @callback
+    def adopt_existing(self) -> None:
+        """Learn which of our notifications are open already.
+
+        Another integration may have brought them back after a restart
+        before we were listening. Home Assistant offers no public way to list
+        them, so this reads its store, and quietly does nothing should that
+        ever change.
+        """
+        try:
+            existing = persistent_notification._async_get_or_create_notifications(
+                self.hass
+            )
+        except Exception:
+            _LOGGER.debug("Could not read the open notifications")
+            return
+        self._handle_notices(persistent_notification.UpdateType.CURRENT, dict(existing))
+
+    @callback
+    def open_ids(self) -> list[str]:
+        """Return the ids of our notifications that are open."""
+        return list(self._open)
 
     @callback
     def _handle_notices(
@@ -197,7 +221,9 @@ class Dispatcher:
     @callback
     def dismiss(self, notification_id: str) -> None:
         """Remove one of our notifications, if it is still there."""
-        persistent_notification.async_dismiss(self.hass, notification_id)
+        if self._open.pop(notification_id, None) is None:
+            return
+        self._call("dismiss", {"notification_id": notification_id})
 
     @callback
     def refresh_runtime(self, info: RuntimeInfo, *, reopen: bool = False) -> None:
@@ -283,11 +309,28 @@ class Dispatcher:
     @callback
     def _create(self, notice: Notice) -> None:
         """Show one notification, replacing an older one about the same thing."""
-        persistent_notification.async_create(
-            self.hass,
-            notice.body,
-            title=notice.title,
-            notification_id=notice.notification_id,
+        self._open[notice.notification_id] = (notice.title, notice.body)
+        self._call(
+            "create",
+            {
+                "notification_id": notice.notification_id,
+                "title": notice.title,
+                "message": notice.body,
+            },
+        )
+
+    @callback
+    def _call(self, service: str, data: dict[str, Any]) -> None:
+        """Go through the service rather than the functions behind it.
+
+        Integrations that keep notifications across a restart, such as
+        Restore Persistent Notification, only notice changes made through
+        the service; anything else comes back after the next restart.
+        """
+        self.hass.async_create_task(
+            self.hass.services.async_call(
+                persistent_notification.DOMAIN, service, data, blocking=False
+            )
         )
 
     async def async_test(self, channel: Channel) -> None:
