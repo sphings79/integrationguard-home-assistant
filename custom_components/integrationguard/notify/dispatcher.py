@@ -7,6 +7,7 @@ A run either announces something or it does not.
 
 from __future__ import annotations
 
+from collections.abc import Collection
 from datetime import datetime, time, timedelta
 import logging
 from typing import Any
@@ -25,6 +26,7 @@ from .messages import (
     Notice,
     build_runtime_message,
     build_runtime_recovery_message,
+    repositories_notice_id,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -159,12 +161,37 @@ class Dispatcher:
             await self._async_deliver(channel, message)
 
     @callback
-    def show(self, message: Message) -> None:
-        """Show a message's notifications again, without sending anything."""
-        severity = self._config.severity(message.severity_id)
-        if severity is None or not severity.persistent_notification:
+    def sync_repositories(
+        self, notices: dict[str, Notice], reopen: Collection[str] = ()
+    ) -> None:
+        """Make the per-severity notifications about repositories match.
+
+        A severity with nothing left loses its notification. One listed in
+        reopen is shown even if the user dismissed it, because something new
+        was just announced in it; the others are only updated while open.
+        """
+        for severity in self._config.severities:
+            notice = notices.get(severity.id)
+            if not severity.persistent_notification:
+                notice = None
+            self._sync(
+                repositories_notice_id(severity.id),
+                notice,
+                reopen=severity.id in reopen,
+            )
+
+    @callback
+    def _sync(
+        self, notification_id: str, notice: Notice | None, *, reopen: bool
+    ) -> None:
+        """Show, update or remove one notification, sending nothing else."""
+        if notice is None:
+            self.dismiss(notification_id)
             return
-        for notice in message.notices:
+        shown = self._open.get(notification_id)
+        if shown is None and not reopen:
+            return
+        if shown != (notice.title, notice.body):
             self._create(notice)
 
     @callback
@@ -188,11 +215,7 @@ class Dispatcher:
             return
         message = build_runtime_message(info, severity_id, self.language)
         for notice in message.notices:
-            shown = self._open.get(notice.notification_id)
-            if shown is None and not reopen:
-                continue
-            if shown != (notice.title, notice.body):
-                self._create(notice)
+            self._sync(notice.notification_id, notice, reopen=reopen)
 
     async def async_send_runtime(self, info: RuntimeInfo, now: datetime) -> bool | None:
         """Announce one runtime change, or hold it for the quiet hours.

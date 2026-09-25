@@ -221,6 +221,12 @@ Severities decide the status through their priority: from 90 critical, from 80
 abandoned, from 50 stale, below that worth a look. Rename them, recolour them,
 repoint any rule at any of them.
 
+Inside Home Assistant, the repositories of a severity share one notification
+that lists them, shrinks as they are fixed and goes away when nothing is left.
+Every integration with a runtime problem gets its own. *Info* shows no
+notification by default — on a typical installation that would be dozens of
+repositories; the panel and the sensors list them anyway.
+
 ## Automation examples
 
 React to a repository turning bad:

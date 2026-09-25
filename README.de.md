@@ -227,6 +227,13 @@ Die Severities bestimmen über ihre Priorität den Status: ab 90 kritisch, ab 80
 verwaist, ab 50 veraltet, darunter einen Blick wert. Du kannst sie umbenennen,
 umfärben und jede Regel auf jede von ihnen zeigen lassen.
 
+In Home Assistant teilen sich die Repositories einer Severity eine
+Benachrichtigung, die sie auflistet, beim Beheben schrumpft und verschwindet,
+wenn nichts mehr übrig ist. Jede Integration mit einem Laufzeitproblem bekommt
+eine eigene. *Info* zeigt standardmäßig keine Benachrichtigung — auf einer
+üblichen Installation wären das Dutzende Repositories; Panel und Sensoren
+listen sie ohnehin.
+
 ## Automatisierungsbeispiele
 
 Auf ein kippendes Repository reagieren:

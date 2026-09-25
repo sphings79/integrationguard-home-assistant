@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Collection
 from datetime import datetime, timedelta
 import logging
 from typing import Any
@@ -21,6 +22,7 @@ from .const import (
     EVENT_STATUS_CHANGED,
     HACS_CATEGORIES,
     HASSIO_DOMAIN,
+    RUNTIME_GRACE_STATES,
     SIGNAL_UPDATED,
     STARTUP_DELAY_SECONDS,
     Category,
@@ -32,11 +34,10 @@ from .history import History
 from .models import Config, RepositoryHealth, RepositoryInfo, RuntimeInfo, ScanResult
 from .notify.dispatcher import Dispatcher, next_quiet_end
 from .notify.messages import (
-    Change,
     build_problem_messages,
     build_recovery_message,
+    build_repository_notices,
     collect_changes,
-    repository_notice_id,
     runtime_notice_id,
 )
 from .runtime.monitor import RuntimeMonitor
@@ -249,19 +250,9 @@ class IntegrationGuardCoordinator:
     @callback
     def _restore_repository_notices(self) -> None:
         """Bring back the notifications about repositories a restart took."""
-        if self.result is None or not self.config.settings.monitoring_enabled:
-            return
-        changes = [
-            Change(item, Status.HEALTHY)
-            for item in self.result.repositories
-            if not item.ignored
-            and item.status != Status.HEALTHY
-            and self._announced.get(item.key) == item.status
-        ]
-        for message in build_problem_messages(
-            self.config, changes, self.dispatcher.language
-        ):
-            self.dispatcher.show(message)
+        self._sync_repository_notices(
+            self.result, [severity.id for severity in self.config.severities]
+        )
 
     async def _async_runtime_recoveries(self, now: datetime) -> None:
         """Clear up after integrations that work again, update the rest."""
@@ -277,6 +268,10 @@ class IntegrationGuardCoordinator:
             info = self.runtime.states.get(domain)
             if info is not None and info.problem:
                 self.dispatcher.refresh_runtime(info, reopen=reopen)
+                continue
+            if info is not None and info.state in RUNTIME_GRACE_STATES:
+                # Back inside a grace period, say after it was made longer,
+                # but still not working: nothing has been fixed.
                 continue
             del self._runtime_announced[domain]
             self.dispatcher.dismiss(runtime_notice_id(domain))
@@ -529,25 +524,24 @@ class IntegrationGuardCoordinator:
 
     async def _async_announce(self, result: ScanResult) -> None:
         """Tell the user what changed, unless the quiet hours say otherwise."""
-        # Uninstalled or ignored since: nothing to report, but its
-        # notification has to go.
+        # Uninstalled or ignored since: nothing to report any more.
         watched = {item.key for item in result.repositories if not item.ignored}
         for key in [key for key in self._announced if key not in watched]:
             del self._announced[key]
-            self.dispatcher.dismiss(repository_notice_id(key))
-        if not self.config.settings.monitoring_enabled:
-            return
+        reopen: set[str] = set()
+        if self.config.settings.monitoring_enabled:
+            reopen = await self._async_send_changes(result)
+        self._sync_repository_notices(result, reopen)
+
+    async def _async_send_changes(self, result: ScanResult) -> set[str]:
+        """Send what changed. Returns the severities that announced a problem."""
         problems, recoveries = collect_changes(result.repositories, self._announced)
-        # The notification about a problem goes as soon as it is fixed, quiet
-        # hours or not; only the message saying so waits.
-        for change in recoveries:
-            self.dispatcher.dismiss(repository_notice_id(change.key))
         if not self.config.settings.notify_on_recovery:
             for change in recoveries:
                 del self._announced[change.key]
             recoveries = []
         if not problems and not recoveries:
-            return
+            return set()
 
         language = self.dispatcher.language
         now = dt_util.utcnow()
@@ -556,6 +550,7 @@ class IntegrationGuardCoordinator:
             messages.append(recovery)
 
         held = False
+        announced: set[str] = set()
         for message in messages:
             if self.dispatcher.is_held(message, now):
                 # Not marking these as announced is what makes them come back
@@ -564,12 +559,38 @@ class IntegrationGuardCoordinator:
                 held = True
                 continue
             await self.dispatcher.async_send(message)
+            if not message.is_recovery:
+                announced.add(message.severity_id)
             for key in message.keys:
                 item = next((r for r in result.repositories if r.key == key), None)
                 if item is not None:
                     self._announced[key] = item.status
         if held:
             self._schedule_quiet_flush()
+        return announced
+
+    @callback
+    def _sync_repository_notices(
+        self, result: ScanResult | None, reopen: Collection[str] = ()
+    ) -> None:
+        """Keep one notification per severity listing the announced problems.
+
+        It lists what the user has been told about and is not fixed yet, so
+        it shrinks as things get fixed and goes away when nothing is left.
+        """
+        items = []
+        if result is not None and self.config.settings.monitoring_enabled:
+            items = [
+                item
+                for item in result.repositories
+                if not item.ignored
+                and item.status != Status.HEALTHY
+                and self._announced.get(item.key, Status.HEALTHY) != Status.HEALTHY
+            ]
+        self.dispatcher.sync_repositories(
+            build_repository_notices(self.config, items, self.dispatcher.language),
+            reopen,
+        )
 
     @callback
     def _schedule_quiet_flush(self) -> None:

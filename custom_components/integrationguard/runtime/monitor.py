@@ -379,8 +379,16 @@ class RuntimeMonitor:
             if not worst:
                 info.problem = _elapsed(info.since, now, grace)
                 return
+            # The grace period is for fresh trouble. An entry that already
+            # counted stays counted while it is still not working, even when
+            # its clock restarts or the grace period was made longer.
+            previous = self._previous.get(info.domain)
+            counted = set(previous[2] or ()) if previous else set()
             worst = [
-                entry for entry in worst if _elapsed(entry.get("since"), now, grace)
+                entry
+                for entry in worst
+                if entry["entry_id"] in counted
+                or _elapsed(entry.get("since"), now, grace)
             ]
 
         info.affected = worst

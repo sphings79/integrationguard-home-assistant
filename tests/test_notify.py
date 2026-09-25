@@ -1,4 +1,7 @@
-"""One Home Assistant notification per problem, removed once it is fixed."""
+"""Notifications in Home Assistant that are kept current and removed when done.
+
+Repositories share one per severity, integrations get one each.
+"""
 
 from __future__ import annotations
 
@@ -15,11 +18,11 @@ from custom_components.integrationguard.models import (
 from custom_components.integrationguard.notify import dispatcher as dispatcher_module
 from custom_components.integrationguard.notify.dispatcher import Dispatcher
 from custom_components.integrationguard.notify.messages import (
-    Change,
     build_problem_messages,
+    build_repository_notices,
     build_runtime_message,
     build_runtime_recovery_message,
-    repository_notice_id,
+    repositories_notice_id,
     runtime_notice_id,
 )
 
@@ -75,18 +78,27 @@ def _retrying(*titles):
     return info
 
 
-def test_every_repository_gets_its_own_notification(config, info):
-    changes = [
-        Change(_health(info, "alpha"), Status.HEALTHY),
-        Change(_health(info, "beta"), Status.HEALTHY),
+def test_repositories_share_one_notification_per_severity(config, info):
+    items = [
+        _health(info, "alpha"),
+        _health(info, "beta"),
+        _health(info, "gamma", severity_id="critical"),
     ]
-    [message] = build_problem_messages(config, changes, "de")
-    assert [notice.notification_id for notice in message.notices] == [
-        repository_notice_id(changes[0].key),
-        repository_notice_id(changes[1].key),
-    ]
-    assert message.notices[0].title == "alpha: veraltet"
-    assert "beta" not in message.notices[0].body
+    notices = build_repository_notices(config, items, "de")
+    assert set(notices) == {"warning", "critical"}
+    assert notices["warning"].notification_id == repositories_notice_id("warning")
+    assert notices["warning"].title == "IntegrationGuard: 2 Befunde"
+    assert "alpha" in notices["warning"].body and "beta" in notices["warning"].body
+    assert notices["critical"].title == "gamma: veraltet"
+
+
+def test_a_problem_message_brings_no_notification_of_its_own(config, info):
+    from custom_components.integrationguard.notify.messages import Change
+
+    [message] = build_problem_messages(
+        config, [Change(_health(info, "alpha"), Status.HEALTHY)], "de"
+    )
+    assert message.notices == []
 
 
 def test_a_runtime_problem_has_one_notification_per_integration():
@@ -215,9 +227,69 @@ def test_a_restart_brings_the_notification_back(config, shown):
     assert [call[0] for call in shown["created"]] == [runtime_notice_id("tuya_local")]
 
 
-def test_show_brings_back_notifications_without_sending(config, info, shown):
+def _open(dispatcher, notice):
+    dispatcher._handle_notices(
+        dispatcher_module.persistent_notification.UpdateType.ADDED,
+        {notice.notification_id: {"title": notice.title, "message": notice.body}},
+    )
+
+
+def test_new_problems_open_the_severity_notification(config, info, shown):
     dispatcher = Dispatcher(FakeHass(), config)
-    change = Change(_health(info, "alpha"), Status.HEALTHY)
-    [message] = build_problem_messages(config, [change], "de")
-    dispatcher.show(message)
-    assert [call[0] for call in shown["created"]] == [repository_notice_id(change.key)]
+    notices = build_repository_notices(config, [_health(info, "alpha")], "de")
+    dispatcher.sync_repositories(notices, reopen={"warning"})
+    assert [call[0] for call in shown["created"]] == [repositories_notice_id("warning")]
+
+
+def test_a_dismissed_list_stays_dismissed_until_something_new(config, info, shown):
+    dispatcher = Dispatcher(FakeHass(), config)
+    notices = build_repository_notices(
+        config, [_health(info, "alpha"), _health(info, "beta")], "de"
+    )
+    dispatcher.sync_repositories(notices)
+    assert shown["created"] == []
+
+
+def test_the_list_shrinks_while_open_and_goes_when_empty(config, info, shown):
+    dispatcher = Dispatcher(FakeHass(), config)
+    both = build_repository_notices(
+        config, [_health(info, "alpha"), _health(info, "beta")], "de"
+    )
+    _open(dispatcher, both["warning"])
+
+    dispatcher.sync_repositories(both)
+    assert shown["created"] == [], "unchanged, nothing to redraw"
+
+    dispatcher.sync_repositories(
+        build_repository_notices(config, [_health(info, "alpha")], "de")
+    )
+    [(notification_id, title, _body)] = shown["created"]
+    assert notification_id == repositories_notice_id("warning")
+    assert title == "alpha: veraltet"
+
+    dispatcher.sync_repositories({})
+    assert repositories_notice_id("warning") in shown["dismissed"]
+
+
+def test_a_severity_without_notifications_gets_none(config, info, shown):
+    config.severity("warning").persistent_notification = False
+    dispatcher = Dispatcher(FakeHass(), config)
+    notices = build_repository_notices(config, [_health(info, "alpha")], "de")
+    dispatcher.sync_repositories(notices, reopen={"warning"})
+    assert shown["created"] == []
+    assert repositories_notice_id("warning") in shown["dismissed"]
+
+
+def test_info_brings_no_notification_on_a_new_installation():
+    from custom_components.integrationguard.store import DEFAULT_SEVERITIES
+
+    persistent = {
+        str(severity["id"]): severity.get("persistent_notification", True)
+        for severity in DEFAULT_SEVERITIES
+    }
+    assert persistent == {
+        "info": False,
+        "warning": True,
+        "critical": True,
+        "security": True,
+    }

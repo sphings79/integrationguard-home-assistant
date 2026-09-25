@@ -486,3 +486,17 @@ def test_nothing_is_judged_before_home_assistant_has_started():
     asyncio.run(guard._async_refresh())
     assert changes == []
     assert guard.states == {}
+
+
+def test_a_counted_entry_stays_counted_when_its_clock_restarts():
+    """A longer grace period must not make a known problem look fixed."""
+    guard = monitor()
+    guard._previous = {
+        "tuya_local": (RuntimeState.SETUP_RETRY, True, ("Garden socket",))
+    }
+    info = _tuya(
+        [_offline("Garden socket"), _offline("Hall light")],
+        guard=guard,
+    )
+    assert info.problem is True
+    assert [entry["title"] for entry in info.affected] == ["Garden socket"]

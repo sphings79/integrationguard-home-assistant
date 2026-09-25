@@ -14,7 +14,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import IntegrationGuardConfigEntry
-from .const import DOMAIN, Status, Usage
+from .const import DOMAIN, RuntimeState, Status, Usage
 from .coordinator import IntegrationGuardCoordinator
 from .entity import IntegrationGuardEntity
 from .models import RepositoryHealth
@@ -268,7 +268,9 @@ class RuntimeProblemsSensor(IntegrationGuardEntity, SensorEntity):
             "waiting": sorted(
                 info.domain
                 for info in self.coordinator.runtime.states.values()
-                if not info.problem and info.state != "ok"
+                # Switched off by hand is a decision, not something to wait on.
+                if not info.problem
+                and info.state not in (RuntimeState.OK, RuntimeState.DISABLED)
             ),
         }
 

@@ -6,6 +6,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-09-25
+
+### Fixed
+
+- **0.1.7 opened a notification for every single repository.** On an
+  installation with 54 findings that was 54 notifications after the update.
+  Repositories share one notification per severity again, listing them. It
+  is kept current: it shrinks quietly as repositories are fixed, goes away
+  when nothing is left, and only opens again when something new is
+  announced in it. Integrations keep one notification each.
+- **A known runtime problem could look fixed.** An entry that had already
+  been reported fell back into its grace period when its clock restarted or
+  the grace period was made longer. It then counted as working again, and
+  was announced a second time once the grace period ran out. The grace
+  period now only applies to fresh trouble.
+- Config entries switched off by hand were listed as waiting for their
+  grace period. They are a decision, not a problem, and are no longer
+  listed.
+
+### Changed
+
+- *Info* shows no notification inside Home Assistant on new installations.
+  Worth a look is not worth a notification, and the panel and the sensors
+  list those repositories anyway. Existing installations keep their
+  setting; it is in the panel under Rules → Severities.
+
 ## [0.1.7] - 2026-09-25
 
 ### Fixed
@@ -175,7 +201,8 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.8
 [0.1.7]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.7
 [0.1.6]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.6
 [0.1.5]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.5

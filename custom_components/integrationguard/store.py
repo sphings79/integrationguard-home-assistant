@@ -43,6 +43,9 @@ DEFAULT_SEVERITIES: tuple[dict[str, Any], ...] = (
         "priority": 10,
         "color": "blue-grey",
         "icon": "mdi:information-outline",
+        # Worth a look is not worth a notification: on a typical installation
+        # that is dozens of repositories. The panel and the sensors show them.
+        "persistent_notification": False,
     },
     {
         "id": SeverityId.WARNING,

@@ -10,8 +10,10 @@ function colour(state: string, muted: boolean): string {
 export function renderRuntime(ctx: Ctx): TemplateResult {
   const { t, data } = ctx;
   const problems = data.runtime.filter((item) => item.problem);
+  // Switched off by hand is a decision, not something to wait on.
   const waiting = data.runtime.filter(
-    (item) => !item.problem && item.state !== "ok",
+    (item) =>
+      !item.problem && item.state !== "ok" && item.state !== "disabled",
   );
 
   const entry = (item: (typeof data.runtime)[number], muted: boolean) => {

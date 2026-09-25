@@ -821,7 +821,7 @@ import{i as U,c as n,A as d,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
           `)}
       </div>
     </div>
-  `}function te(s,e){return e?"var(--secondary-text-color)":s==="ok"?v.stale:v.abandoned}function ie(s){const{t:e,data:a}=s,i=a.runtime.filter(t=>t.problem),l=a.runtime.filter(t=>!t.problem&&t.state!=="ok"),r=(t,o)=>{const h=t.entries.filter(c=>(t.affected??[]).includes(c.entry_id)),p=h.length>1;return n`
+  `}function te(s,e){return e?"var(--secondary-text-color)":s==="ok"?v.stale:v.abandoned}function ie(s){const{t:e,data:a}=s,i=a.runtime.filter(t=>t.problem),l=a.runtime.filter(t=>!t.problem&&t.state!=="ok"&&t.state!=="disabled"),r=(t,o)=>{const h=t.entries.filter(c=>(t.affected??[]).includes(c.entry_id)),p=h.length>1;return n`
     <div class="list-item">
       <div class="grow">
         <div class="name">

@@ -1,9 +1,10 @@
 """Builds the text of a notification.
 
 The data changes once a day, so a run produces one message per severity rather
-than a stream of single alerts. The notification inside Home Assistant is the
-exception: it is one per problem, so it can be removed on its own once that
-problem is gone.
+than a stream of single alerts. The notification inside Home Assistant is kept
+current instead: one per severity lists the repositories, one per integration
+describes a runtime problem, and each goes away once there is nothing left in
+it.
 """
 
 from __future__ import annotations
@@ -52,9 +53,9 @@ class Message:
     notices: list[Notice] = field(default_factory=list)
 
 
-def repository_notice_id(key: str) -> str:
-    """Return the id of the Home Assistant notification about a repository."""
-    return f"{DOMAIN}_repository_{key}"
+def repositories_notice_id(severity_id: str) -> str:
+    """Return the id of the notification listing a severity's repositories."""
+    return f"{DOMAIN}_repositories_{severity_id}"
 
 
 def runtime_notice_id(domain: str) -> str:
@@ -106,17 +107,29 @@ def build_problem_messages(
                 body=_problem_body(group, language),
                 keys=[change.key for change in group],
                 url=group[0].item.info.url if len(group) == 1 else None,
-                notices=[
-                    Notice(
-                        notification_id=repository_notice_id(change.key),
-                        title=_problem_title(config, [change], language),
-                        body=_problem_body([change], language),
-                    )
-                    for change in group
-                ],
             )
         )
     return messages
+
+
+def build_repository_notices(
+    config: Config, items: list[RepositoryHealth], language: str
+) -> dict[str, Notice]:
+    """Return one notification per severity, listing its repositories."""
+    grouped: dict[str, list[Change]] = {}
+    for item in items:
+        severity_id = severity_of(config, item)
+        if severity_id is not None:
+            grouped.setdefault(severity_id, []).append(Change(item, Status.HEALTHY))
+    notices: dict[str, Notice] = {}
+    for severity_id, group in grouped.items():
+        group.sort(key=lambda change: change.item.key)
+        notices[severity_id] = Notice(
+            notification_id=repositories_notice_id(severity_id),
+            title=_problem_title(config, group, language),
+            body=_problem_body(group, language),
+        )
+    return notices
 
 
 def build_recovery_message(
