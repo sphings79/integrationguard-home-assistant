@@ -174,7 +174,9 @@ class Settings:
     notify_on_recovery: bool = True
     runtime_enabled: bool = True
     # Off: only integrations that came from HACS. On: every integration.
-    runtime_include_all: bool = False
+    # Existing installations keep what they stored; the default only decides
+    # for new ones.
+    runtime_include_all: bool = True
     runtime_grace_minutes: int = DEFAULT_RUNTIME_GRACE_MINUTES
     quiet_hours: QuietHours = field(default_factory=QuietHours)
     history_retention_days: int = DEFAULT_HISTORY_RETENTION_DAYS
@@ -302,19 +304,36 @@ class RuntimeInfo:
     state: str = RuntimeState.NOT_APPLICABLE
     # False while a retrying entry is still inside its grace period.
     problem: bool = False
+    # The entry the state and the reason belong to.
     title: str = ""
+    # The integration's own display name.
+    name: str = ""
     # The repository the integration came from, empty for core integrations.
     full_name: str = ""
     reason: str = ""
     translation_key: str | None = None
     since: str | None = None
     entries: list[dict[str, Any]] = field(default_factory=list)
+    # The entries that make up the problem: in the worst state and, when
+    # retrying, past their grace period.
+    affected: list[dict[str, Any]] = field(default_factory=list)
     repairs: list[RepairIssue] = field(default_factory=list)
 
     @property
     def url(self) -> str | None:
         """Return the GitHub page, empty for core integrations."""
         return f"https://github.com/{self.full_name}" if self.full_name else None
+
+    @property
+    def label(self) -> str:
+        """Return how the integration is named in a list.
+
+        Several affected entries are the integration with a count; a single
+        one is that entry.
+        """
+        if len(self.affected) > 1:
+            return f"{self.name or self.domain} ({len(self.affected)})"
+        return self.title or self.domain
 
     @property
     def configuration_url(self) -> str:
@@ -330,11 +349,13 @@ class RuntimeInfo:
             "state": self.state,
             "problem": self.problem,
             "title": self.title,
+            "name": self.name,
             "full_name": self.full_name,
             "reason": self.reason,
             "translation_key": self.translation_key,
             "since": self.since,
             "entries": self.entries,
+            "affected": [entry["entry_id"] for entry in self.affected],
             "repairs": [issue.to_dict() for issue in self.repairs],
         }
 

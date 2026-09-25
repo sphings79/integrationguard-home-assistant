@@ -192,7 +192,7 @@ async def websocket_card(
             "runtime": [
                 {
                     "domain": info.domain,
-                    "name": info.title or info.domain,
+                    "name": info.label,
                     "state": info.state,
                     "url": info.configuration_url,
                 }

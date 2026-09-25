@@ -6,6 +6,49 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-09-25
+
+### Fixed
+
+- **A runtime message named the wrong device.** The name came from the first
+  config entry of the integration, the state and the reason from the entry
+  that was actually broken. With tuya-local that blamed a working ceiling
+  lamp for another device being offline. Name, state and reason now all come
+  from the same entry.
+- **Every Home Assistant restart produced false alarms.** The runtime
+  monitor judged the config entries while Home Assistant was still starting,
+  when most of them are simply not set up yet, so "not loaded" went out for
+  integrations that were fine a second later. It now waits until Home
+  Assistant has started, "not loaded" gets the same grace period as
+  retrying, and an entry that is being set up or reloaded keeps its last
+  verdict instead of briefly looking fixed.
+
+### Changed
+
+- **One notification per problem, removed once it is fixed.** The
+  notification inside Home Assistant used to be one per severity, each new
+  problem replacing the last. Now every repository and every integration has
+  its own. When the problem goes away its notification is removed instead of
+  being answered by another one, and when fewer entries of an integration
+  are affected it is updated quietly. Push channels, which cannot take a
+  message back, still get "working again" if that is switched on — now also
+  for integrations, but only for problems they were actually told about.
+  Notifications do not survive a restart of Home Assistant, so the ones that
+  still apply are brought back afterwards, without sending anything.
+- **Several broken entries of one integration are one message.** Instead of
+  naming one of them, the message says how many entries are affected and
+  lists each with its reason. A new message goes out when another entry
+  joins them, not when one recovers. The card and the history show the
+  integration with the number of affected entries.
+- **Every integration is watched by default, not only those from HACS.** A
+  TP-Link plug or an Android TV that keeps retrying is as much worth knowing
+  as a custom integration, and dismissed discoveries, which used to make
+  this noisy, are left out since 0.1.2. This only changes the default for new
+  installations; an existing one keeps its stored setting.
+- The grace period for retrying entries now counts per entry. A device that
+  only just dropped out waits its turn, even when another entry of the same
+  integration has been stuck for hours.
+
 ## [0.1.6] - 2026-08-29
 
 ### Fixed
@@ -132,7 +175,8 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.7
 [0.1.6]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.6
 [0.1.5]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.5
 [0.1.4]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.4

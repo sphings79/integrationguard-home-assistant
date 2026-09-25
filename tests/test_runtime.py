@@ -157,6 +157,7 @@ class FakeHass:
     def __init__(self, entries, components):
         self.config_entries = FakeEntries(entries)
         self.config = type("C", (), {"components": components})()
+        self.data = {}
 
 
 def test_ignored_discoveries_do_not_count_as_configuration(monkeypatch):
@@ -201,6 +202,190 @@ def test_the_runtime_monitor_also_leaves_them_out():
     result = RuntimeMonitor._evaluate(guard, Settings())
     assert result == {}, "a domain with nothing but dismissals has nothing to judge"
     assert guard.hass.config_entries.asked_with == [False]
+
+
+class FakeLoadedEntry(FakeEntry):
+    """A config entry with a title, a state and a reason."""
+
+    def __init__(self, title, state, reason=None):
+        super().__init__("tuya_local")
+        self.entry_id = title
+        self.title = title
+        self.state = state
+        self.reason = reason
+        self.error_reason_translation_key = None
+
+    def async_get_active_flows(self, hass, sources):
+        return iter(())
+
+
+def _tuya(entries, guard=None, retrying_for=None):
+    """Judge a made-up tuya-local installation.
+
+    retrying_for maps entry titles to how long they have been retrying.
+    """
+    from homeassistant.util import dt as dt_util
+
+    from custom_components.integrationguard.runtime.monitor import RuntimeMonitor
+
+    guard = guard or monitor()
+    guard.hass = FakeHass(entries, {"tuya_local"})
+    guard._domains = {"tuya_local": "make-all/tuya-local"}
+    guard._issues_by_domain = lambda: {}
+    for title, age in (retrying_for or {}).items():
+        started = dt_util.utcnow() - age
+        guard._entry_since[title] = [RuntimeState.SETUP_RETRY, started.isoformat()]
+    return RuntimeMonitor._evaluate(guard, Settings())["tuya_local"]
+
+
+def _ok(title):
+    from homeassistant.config_entries import ConfigEntryState
+
+    return FakeLoadedEntry(title, ConfigEntryState.LOADED)
+
+
+def _offline(title):
+    from homeassistant.config_entries import ConfigEntryState
+
+    return FakeLoadedEntry(title, ConfigEntryState.SETUP_RETRY, "device offline")
+
+
+LONG = timedelta(hours=1)
+
+
+def test_the_runtime_names_the_entry_that_is_actually_broken():
+    """The title has to come from the same entry as the state and the reason.
+
+    It used to be the first entry of the domain, so a working ceiling lamp was
+    blamed for another tuya-local device being offline.
+    """
+    info = _tuya(
+        [_ok("Ceiling lamp"), _offline("Garden socket"), _ok("Desk lamp")],
+        retrying_for={"Garden socket": LONG},
+    )
+    assert info.state == RuntimeState.SETUP_RETRY
+    assert info.problem is True
+    assert info.title == "Garden socket"
+    assert info.reason == "device offline"
+    assert [entry["title"] for entry in info.affected] == ["Garden socket"]
+
+
+def test_a_healthy_domain_keeps_the_first_title():
+    info = _tuya([_ok("Ceiling lamp"), _ok("Desk lamp")])
+    assert info.state == RuntimeState.OK
+    assert info.problem is False
+    assert info.title == "Ceiling lamp"
+    assert info.affected == []
+
+
+def test_every_retrying_entry_past_its_grace_is_affected():
+    info = _tuya(
+        [_offline("Garden socket"), _ok("Ceiling lamp"), _offline("Hall light")],
+        retrying_for={"Garden socket": LONG, "Hall light": LONG},
+    )
+    assert [entry["title"] for entry in info.affected] == [
+        "Garden socket",
+        "Hall light",
+    ]
+
+
+def test_the_grace_period_counts_per_entry():
+    """A device that only just dropped out waits, even if another is stuck."""
+    info = _tuya(
+        [_offline("Garden socket"), _offline("Hall light")],
+        retrying_for={"Garden socket": LONG},
+    )
+    assert info.problem is True
+    assert [entry["title"] for entry in info.affected] == ["Garden socket"]
+
+
+def test_nothing_is_a_problem_while_every_entry_is_inside_its_grace():
+    info = _tuya([_offline("Garden socket"), _ok("Ceiling lamp")])
+    assert info.state == RuntimeState.SETUP_RETRY
+    assert info.problem is False
+    assert info.affected == []
+
+
+def test_entry_clocks_survive_a_restart_and_forget_removed_entries():
+    guard = monitor()
+    _tuya(
+        [_offline("Garden socket")],
+        guard=guard,
+        retrying_for={"Garden socket": LONG, "Gone": LONG},
+    )
+    assert "Gone" not in guard._entry_since
+
+    restored = monitor()
+    restored.restore(guard.to_state())
+    info = _tuya([_offline("Garden socket")], guard=restored)
+    assert info.problem is True
+
+
+def test_only_a_growing_group_is_news():
+    from custom_components.integrationguard.runtime.monitor import _is_news
+
+    retry = RuntimeState.SETUP_RETRY
+    assert _is_news(None, (retry, True, ("a",)))
+    assert _is_news((retry, False, ()), (retry, True, ("a",)))
+    assert _is_news((retry, True, ("a",)), (retry, True, ("a", "b")))
+    assert not _is_news((retry, True, ("a", "b")), (retry, True, ("a",)))
+    assert not _is_news((retry, True, ("a",)), (retry, True, ("a",)))
+    # A new entry replacing a recovered one is news, too.
+    assert _is_news((retry, True, ("a",)), (retry, True, ("b",)))
+    # After an update from a version that did not remember the ids.
+    assert not _is_news((retry, True, None), (retry, True, ("a", "b")))
+    assert _is_news((retry, True, None), (RuntimeState.SETUP_ERROR, True, ("a",)))
+
+
+def test_an_old_saved_state_still_restores():
+    guard = monitor()
+    guard.restore({"previous": {"tuya_local": [RuntimeState.SETUP_RETRY, True]}})
+    assert guard._previous == {"tuya_local": (RuntimeState.SETUP_RETRY, True, None)}
+    assert guard.to_state()["previous"] == {
+        "tuya_local": [RuntimeState.SETUP_RETRY, True, None]
+    }
+
+
+def test_one_affected_entry_is_named_in_the_message():
+    from custom_components.integrationguard.notify.messages import (
+        build_runtime_message,
+    )
+
+    info = _tuya(
+        [_ok("Ceiling lamp"), _offline("Garden socket")],
+        retrying_for={"Garden socket": LONG},
+    )
+    message = build_runtime_message(info, "warning", "de")
+    assert message.title == "IntegrationGuard: Garden socket"
+    assert message.body == ("Garden socket versucht es immer wieder: device offline")
+
+
+def test_several_affected_entries_become_one_message():
+    from custom_components.integrationguard.notify.messages import (
+        build_runtime_message,
+    )
+
+    info = _tuya(
+        [_offline("Garden socket"), _ok("Ceiling lamp"), _offline("Hall light")],
+        retrying_for={"Garden socket": LONG, "Hall light": LONG},
+    )
+    info.name = "Tuya Local"
+    message = build_runtime_message(info, "warning", "de")
+    assert message.title == "IntegrationGuard: Tuya Local"
+    assert message.body == (
+        "2 Einträge versuchen es immer wieder:\n"
+        "Garden socket: device offline\n"
+        "Hall light: device offline"
+    )
+    assert message.keys == ["tuya_local"]
+
+
+def test_the_group_falls_back_to_the_domain_without_a_name():
+    info = _tuya(
+        [_offline("Garden socket"), _offline("Hall light")],
+        retrying_for={"Garden socket": LONG, "Hall light": LONG},
+    )
+    assert info.name == "tuya_local"
 
 
 def _judge(entries, components, domain, required=frozenset(), counts=(0, 0)):
@@ -262,3 +447,42 @@ def test_a_backend_helper_another_integration_needs_is_not_unused():
     usage, _, detail = _judge([], {"demo"}, "demo", required={"demo"})
     assert usage == Usage.UNDETERMINED
     assert detail["required_by_another_integration"] is True
+
+
+def test_not_loaded_waits_for_the_grace_period_too():
+    """Right after a start, entries are not set up yet; that is not news."""
+    from homeassistant.config_entries import ConfigEntryState
+
+    info = _tuya([FakeLoadedEntry("Analytics", ConfigEntryState.NOT_LOADED)])
+    assert info.state == RuntimeState.NOT_LOADED
+    assert info.problem is False
+
+
+def test_an_entry_being_reloaded_keeps_its_last_verdict():
+    """A broken entry being set up again must not look fixed for a moment."""
+    from homeassistant.config_entries import ConfigEntryState
+
+    info = _tuya(
+        [FakeLoadedEntry("Garden socket", ConfigEntryState.SETUP_IN_PROGRESS)],
+        retrying_for={"Garden socket": LONG},
+    )
+    assert info.state == RuntimeState.SETUP_RETRY
+    assert info.problem is True
+
+
+def test_an_entry_set_up_for_the_first_time_is_fine():
+    from homeassistant.config_entries import ConfigEntryState
+
+    info = _tuya([FakeLoadedEntry("New lamp", ConfigEntryState.SETUP_IN_PROGRESS)])
+    assert info.state == RuntimeState.OK
+
+
+def test_nothing_is_judged_before_home_assistant_has_started():
+    guard = monitor()
+    changes = []
+    guard._on_change = changes.append
+    import asyncio
+
+    asyncio.run(guard._async_refresh())
+    assert changes == []
+    assert guard.states == {}

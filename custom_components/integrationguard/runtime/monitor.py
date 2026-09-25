@@ -24,11 +24,14 @@ from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.event import async_call_later, async_track_time_interval
+from homeassistant.helpers.start import async_at_started
+from homeassistant.loader import IntegrationNotLoaded, async_get_loaded_integration
 from homeassistant.util import dt as dt_util
 
 from ..const import (
     EVENT_RUNTIME_CHANGED,
     RUNTIME_DEBOUNCE_SECONDS,
+    RUNTIME_GRACE_STATES,
     RUNTIME_HEARTBEAT_MINUTES,
     RUNTIME_ORDER,
     RUNTIME_PROBLEM_STATES,
@@ -52,6 +55,10 @@ STATE_MAP: dict[ConfigEntryState, RuntimeState] = {
     ConfigEntryState.UNLOAD_IN_PROGRESS: RuntimeState.OK,
 }
 
+# While an entry is being set up or unloaded, the last verdict still stands.
+# Otherwise a broken entry being reloaded would look fixed for a moment.
+IN_PROGRESS = {ConfigEntryState.SETUP_IN_PROGRESS, ConfigEntryState.UNLOAD_IN_PROGRESS}
+
 
 def _worse(left: str, right: str) -> str:
     """Return whichever of two runtime states is the worse one."""
@@ -59,6 +66,35 @@ def _worse(left: str, right: str) -> str:
     left_index = order.index(left) if left in order else 0
     right_index = order.index(right) if right in order else 0
     return left if left_index >= right_index else right
+
+
+def _stamp(book: dict[str, list[str]], key: str, state: str, now: datetime) -> str:
+    """Return since when a key has been in a state, starting the clock if new."""
+    remembered = book.get(key)
+    if remembered is None or remembered[0] != state:
+        remembered = [state, now.isoformat()]
+        book[key] = remembered
+    return remembered[1]
+
+
+def _elapsed(since: str | None, now: datetime, grace: timedelta) -> bool:
+    """Return whether a state that began at since has outlasted the grace."""
+    started = dt_util.parse_datetime(since) if since else None
+    return started is not None and now - started >= grace
+
+
+def _is_news(
+    previous: tuple[str, bool, tuple[str, ...] | None] | None,
+    current: tuple[str, bool, tuple[str, ...]],
+) -> bool:
+    """Return whether a domain's new picture is worth announcing."""
+    if previous is None or previous[:2] != current[:2]:
+        return True
+    # Same verdict. Only an entry joining the affected ones is news; fewer
+    # broken entries is not, and neither is learning the ids after an update.
+    if previous[2] is None:
+        return False
+    return not set(current[2]) <= set(previous[2])
 
 
 class RuntimeMonitor:
@@ -80,13 +116,21 @@ class RuntimeMonitor:
         # Domain -> [state, when it began]. Drives both the "since" shown in
         # the panel and the grace period for retrying entries.
         self._state_since: dict[str, list[str]] = {}
-        self._previous: dict[str, tuple[str, bool]] = {}
+        # The same per config entry. The grace period is judged per entry, so
+        # a second device dropping out waits its turn like the first one did.
+        self._entry_since: dict[str, list[str]] = {}
+        # Domain -> (state, problem, affected entry ids). None for the ids
+        # means "not known yet", as after an update from an older version.
+        self._previous: dict[str, tuple[str, bool, tuple[str, ...] | None]] = {}
         self._unsubs: list[Callable[[], None]] = []
         self._unsub_grace: Callable[[], None] | None = None
         self._debouncer: Debouncer | None = None
+        # False until Home Assistant has finished starting. Before that most
+        # entries are simply not set up yet, which says nothing.
+        self.ready = False
 
     async def async_start(self) -> None:
-        """Subscribe to the two registries and take a first look."""
+        """Subscribe to the two registries, and look once Home Assistant is up."""
         self._debouncer = Debouncer(
             self.hass,
             _LOGGER,
@@ -111,7 +155,16 @@ class RuntimeMonitor:
                 timedelta(minutes=RUNTIME_HEARTBEAT_MINUTES),
             )
         )
-        await self._async_refresh()
+        self._unsubs.append(async_at_started(self.hass, self._handle_started))
+
+    async def _handle_started(self, _hass: HomeAssistant) -> None:
+        """Take the first look, and always report it.
+
+        The first report is what tells the listener that the picture is
+        complete, even when it is the same as before the restart.
+        """
+        self.ready = True
+        await self._async_refresh(first=True)
 
     async def async_stop(self) -> None:
         """Drop every subscription and timer."""
@@ -129,8 +182,10 @@ class RuntimeMonitor:
         """Return what has to survive a restart."""
         return {
             "state_since": self._state_since,
+            "entry_since": self._entry_since,
             "previous": {
-                domain: list(value) for domain, value in self._previous.items()
+                domain: [state, problem, list(ids) if ids is not None else None]
+                for domain, (state, problem, ids) in self._previous.items()
             },
         }
 
@@ -143,11 +198,21 @@ class RuntimeMonitor:
             for domain, value in (data.get("state_since") or {}).items()
             if isinstance(value, list) and len(value) == 2
         }
-        self._previous = {
-            domain: (value[0], bool(value[1]))
-            for domain, value in (data.get("previous") or {}).items()
+        self._entry_since = {
+            entry_id: list(value)
+            for entry_id, value in (data.get("entry_since") or {}).items()
             if isinstance(value, list) and len(value) == 2
         }
+        self._previous = {}
+        for domain, value in (data.get("previous") or {}).items():
+            if not isinstance(value, list) or len(value) not in (2, 3):
+                continue
+            ids = value[2] if len(value) == 3 else None
+            self._previous[domain] = (
+                value[0],
+                bool(value[1]),
+                tuple(ids) if isinstance(ids, list) else None,
+            )
 
     def set_domains(self, domains: dict[str, str]) -> None:
         """Tell the monitor which domains came from HACS."""
@@ -185,8 +250,10 @@ class RuntimeMonitor:
         if self._debouncer is not None:
             self._debouncer.async_schedule_call()
 
-    async def _async_refresh(self) -> None:
+    async def _async_refresh(self, first: bool = False) -> None:
         """Rebuild the picture and announce what changed."""
+        if not self.ready:
+            return
         settings = self._settings()
         if not settings.runtime_enabled:
             if self.states:
@@ -198,12 +265,17 @@ class RuntimeMonitor:
         self._schedule_grace_check(settings)
 
         current = {
-            domain: (info.state, info.problem) for domain, info in self.states.items()
+            domain: (
+                info.state,
+                info.problem,
+                tuple(sorted(entry["entry_id"] for entry in info.affected)),
+            )
+            for domain, info in self.states.items()
         }
         changed: list[RuntimeInfo] = []
         for domain, value in current.items():
             previous = self._previous.get(domain)
-            if previous == value:
+            if not _is_news(previous, value):
                 continue
             info = self.states[domain]
             changed.append(info)
@@ -231,7 +303,7 @@ class RuntimeMonitor:
                     "reason": "",
                 },
             )
-        if current != self._previous:
+        if current != self._previous or first:
             self._previous = current
             self._on_change(changed)
 
@@ -241,6 +313,7 @@ class RuntimeMonitor:
         now = dt_util.utcnow()
         grace = timedelta(minutes=max(0, settings.runtime_grace_minutes))
         result: dict[str, RuntimeInfo] = {}
+        seen_entries: set[str] = set()
 
         for domain in self._watched_domains(settings):
             # Entries the user ignored during discovery exist only to stop
@@ -258,22 +331,28 @@ class RuntimeMonitor:
 
             info = RuntimeInfo(
                 domain=domain,
+                name=self._integration_name(domain),
                 full_name=self._domains.get(domain, ""),
                 title=entries[0].title,
                 repairs=issues.get(domain, []),
             )
             for entry in entries:
                 state = self._entry_state(entry)
+                seen_entries.add(entry.entry_id)
                 info.entries.append(
                     {
                         "entry_id": entry.entry_id,
                         "title": entry.title,
                         "state": state,
                         "reason": entry.reason or "",
+                        "since": _stamp(self._entry_since, entry.entry_id, state, now),
                     }
                 )
                 if _worse(info.state, state) != info.state:
+                    # Name the entry the state and the reason belong to, not
+                    # just whichever one happens to come first.
                     info.state = state
+                    info.title = entry.title
                     info.reason = entry.reason or ""
                     info.translation_key = entry.error_reason_translation_key
 
@@ -282,26 +361,34 @@ class RuntimeMonitor:
 
         for domain in set(self._state_since) - set(result):
             del self._state_since[domain]
+        for entry_id in set(self._entry_since) - seen_entries:
+            del self._entry_since[entry_id]
         return result
 
     def _finalise(self, info: RuntimeInfo, now: datetime, grace: timedelta) -> None:
         """Stamp the state with a start time and decide whether it counts."""
-        remembered = self._state_since.get(info.domain)
-        if remembered is None or remembered[0] != info.state:
-            remembered = [info.state, now.isoformat()]
-            self._state_since[info.domain] = remembered
-        info.since = remembered[1]
+        info.since = _stamp(self._state_since, info.domain, info.state, now)
 
         if info.state not in RUNTIME_PROBLEM_STATES:
             info.problem = bool(info.repairs)
             return
-        if info.state != RuntimeState.SETUP_RETRY:
-            info.problem = True
-            return
 
-        # Retrying is normal for a while after a restart or a brief outage.
-        started = dt_util.parse_datetime(remembered[1])
-        info.problem = started is not None and now - started >= grace
+        worst = [entry for entry in info.entries if entry["state"] == info.state]
+        if info.state in RUNTIME_GRACE_STATES:
+            # Normal for a while after a restart or a brief outage.
+            if not worst:
+                info.problem = _elapsed(info.since, now, grace)
+                return
+            worst = [
+                entry for entry in worst if _elapsed(entry.get("since"), now, grace)
+            ]
+
+        info.affected = worst
+        info.problem = bool(worst) or not info.entries
+        if worst:
+            # Name an entry that is actually part of the problem.
+            info.title = worst[0]["title"]
+            info.reason = worst[0]["reason"]
 
     def _schedule_grace_check(self, settings: Settings) -> None:
         """Wake up again when the earliest grace period runs out."""
@@ -309,22 +396,22 @@ class RuntimeMonitor:
             self._unsub_grace()
             self._unsub_grace = None
 
-        waiting = [
-            info
-            for info in self.states.values()
-            if info.state == RuntimeState.SETUP_RETRY and not info.problem
-        ]
-        if not waiting:
-            return
-
         now = dt_util.utcnow()
         grace = timedelta(minutes=max(0, settings.runtime_grace_minutes))
         delays = []
-        for info in waiting:
-            started = dt_util.parse_datetime(info.since or "") if info.since else None
-            if started is None:
+        for info in self.states.values():
+            if info.state not in RUNTIME_GRACE_STATES:
                 continue
-            delays.append(max(1.0, (started + grace - now).total_seconds()))
+            stamps = [
+                entry.get("since")
+                for entry in info.entries
+                if entry["state"] == info.state
+            ] or [info.since]
+            for stamp in stamps:
+                started = dt_util.parse_datetime(stamp) if stamp else None
+                if started is None or now - started >= grace:
+                    continue
+                delays.append(max(1.0, (started + grace - now).total_seconds()))
         if not delays:
             return
 
@@ -345,12 +432,23 @@ class RuntimeMonitor:
             }
         return set(self._domains)
 
+    def _integration_name(self, domain: str) -> str:
+        """Return the integration's display name, the domain if unknown."""
+        try:
+            return async_get_loaded_integration(self.hass, domain).name
+        except (IntegrationNotLoaded, KeyError):
+            return domain
+
     def _entry_state(self, entry: ConfigEntry) -> str:
         """Return the runtime state of one config entry."""
         if entry.disabled_by is not None:
             return RuntimeState.DISABLED
         if any(entry.async_get_active_flows(self.hass, REAUTH_SOURCES)):
             return RuntimeState.REAUTH
+        if entry.state in IN_PROGRESS and (
+            remembered := self._entry_since.get(entry.entry_id)
+        ):
+            return remembered[0]
         return STATE_MAP.get(entry.state, RuntimeState.OK)
 
     def _issues_by_domain(self) -> dict[str, list[RepairIssue]]:

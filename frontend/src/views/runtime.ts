@@ -14,10 +14,21 @@ export function renderRuntime(ctx: Ctx): TemplateResult {
     (item) => !item.problem && item.state !== "ok",
   );
 
-  const entry = (item: (typeof data.runtime)[number], muted: boolean) => html`
+  const entry = (item: (typeof data.runtime)[number], muted: boolean) => {
+    // Several affected entries are the integration with a count, each entry
+    // listed with its reason; a single one is that entry.
+    const affected = item.entries.filter((e) =>
+      (item.affected ?? []).includes(e.entry_id),
+    );
+    const grouped = affected.length > 1;
+    return html`
     <div class="list-item">
       <div class="grow">
-        <div class="name">${item.title || item.domain}</div>
+        <div class="name">
+          ${grouped
+            ? `${item.name || item.domain} (${affected.length})`
+            : item.title || item.domain}
+        </div>
         <div class="sub">
           ${item.domain} · ${t(`runtime.${item.state}`)}
           ${item.since ? ` · ${t("runtime.since", {
@@ -25,7 +36,16 @@ export function renderRuntime(ctx: Ctx): TemplateResult {
           })}` : ""}
           ${muted ? ` · ${t("runtime.waiting")}` : ""}
         </div>
-        ${item.reason ? html`<div class="sub reason">${item.reason}</div>` : nothing}
+        ${grouped
+          ? affected.map(
+              (e) =>
+                html`<div class="sub reason">
+                  ${e.reason ? `${e.title}: ${e.reason}` : e.title}
+                </div>`,
+            )
+          : item.reason
+            ? html`<div class="sub reason">${item.reason}</div>`
+            : nothing}
         ${item.repairs.length
           ? html`<div class="sub">
               ${t("runtime.repairs")}:
@@ -53,6 +73,7 @@ export function renderRuntime(ctx: Ctx): TemplateResult {
       >
     </div>
   `;
+  };
 
   return html`
     <div class="card">

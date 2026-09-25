@@ -1,14 +1,16 @@
 """Builds the text of a notification.
 
 The data changes once a day, so a run produces one message per severity rather
-than a stream of single alerts.
+than a stream of single alerts. The notification inside Home Assistant is the
+exception: it is one per problem, so it can be removed on its own once that
+problem is gone.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from ..const import Status
+from ..const import DOMAIN, Status
 from ..l10n import finding_text, translate
 from ..models import Config, RepositoryHealth, RuntimeInfo
 
@@ -29,6 +31,15 @@ class Change:
 
 
 @dataclass(slots=True)
+class Notice:
+    """One notification inside Home Assistant, about exactly one problem."""
+
+    notification_id: str
+    title: str
+    body: str
+
+
+@dataclass(slots=True)
 class Message:
     """A message about one severity, ready to be rendered per channel."""
 
@@ -38,6 +49,22 @@ class Message:
     keys: list[str] = field(default_factory=list)
     url: str | None = None
     is_recovery: bool = False
+    notices: list[Notice] = field(default_factory=list)
+
+
+def repository_notice_id(key: str) -> str:
+    """Return the id of the Home Assistant notification about a repository."""
+    return f"{DOMAIN}_repository_{key}"
+
+
+def runtime_notice_id(domain: str) -> str:
+    """Return the id of the Home Assistant notification about an integration."""
+    return f"{DOMAIN}_runtime_{domain}"
+
+
+def _with_url(body: str, url: str | None) -> str:
+    """Return a body with the link underneath, the way notifications show it."""
+    return f"{body}\n\n{url}" if url else body
 
 
 def severity_of(config: Config, item: RepositoryHealth) -> str | None:
@@ -79,6 +106,14 @@ def build_problem_messages(
                 body=_problem_body(group, language),
                 keys=[change.key for change in group],
                 url=group[0].item.info.url if len(group) == 1 else None,
+                notices=[
+                    Notice(
+                        notification_id=repository_notice_id(change.key),
+                        title=_problem_title(config, [change], language),
+                        body=_problem_body([change], language),
+                    )
+                    for change in group
+                ],
             )
         )
     return messages
@@ -118,16 +153,58 @@ def build_runtime_message(
     info: RuntimeInfo, severity_id: str, language: str
 ) -> Message:
     """Return the message for one integration whose runtime state changed."""
-    state = translate(language, f"runtime.{info.state}")
-    name = info.title or info.domain
-    key = "body.runtime_reason" if info.reason else "body.runtime"
+    if len(info.affected) > 1:
+        title = translate(language, "title.runtime", name=info.name or info.domain)
+        body = _runtime_group_body(info, language)
+    else:
+        state = translate(language, f"runtime.{info.state}")
+        name = info.title or info.domain
+        key = "body.runtime_reason" if info.reason else "body.runtime"
+        title = translate(language, "title.runtime", name=name)
+        body = translate(language, key, name=name, state=state, reason=info.reason)
+    url = info.url or info.configuration_url
+    return Message(
+        severity_id=severity_id,
+        title=title,
+        body=body,
+        keys=[info.domain],
+        url=url,
+        notices=[Notice(runtime_notice_id(info.domain), title, _with_url(body, url))],
+    )
+
+
+def build_runtime_recovery_message(
+    config: Config, domain: str, name: str, language: str
+) -> Message | None:
+    """Return the message that an integration is working again."""
+    severity_id = lowest_severity(config)
+    if severity_id is None:
+        return None
     return Message(
         severity_id=severity_id,
         title=translate(language, "title.runtime", name=name),
-        body=translate(language, key, name=name, state=state, reason=info.reason),
-        keys=[info.domain],
-        url=info.url or info.configuration_url,
+        body=translate(language, "body.recovered", name=name),
+        keys=[domain],
+        url=RuntimeInfo(domain=domain).configuration_url,
+        is_recovery=True,
     )
+
+
+def _runtime_group_body(info: RuntimeInfo, language: str) -> str:
+    """Return the text for several entries of an integration in trouble."""
+    header = translate(
+        language,
+        "body.runtime_many",
+        count=len(info.affected),
+        state=translate(language, f"runtime_many.{info.state}"),
+    )
+    lines = [
+        f"{entry['title']}: {entry['reason']}" if entry["reason"] else entry["title"]
+        for entry in info.affected[:MAX_LINES]
+    ]
+    if len(info.affected) > MAX_LINES:
+        lines.append(f"... +{len(info.affected) - MAX_LINES}")
+    return "\n".join([header, *lines])
 
 
 def _problem_title(config: Config, group: list[Change], language: str) -> str:

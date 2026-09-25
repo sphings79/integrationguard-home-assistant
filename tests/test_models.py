@@ -128,3 +128,13 @@ def test_a_missing_or_broken_result_restores_as_nothing():
     assert ScanResult.from_state(None) is None
     assert ScanResult.from_state({}) is None
     assert ScanResult.from_state({"finished": "not a date", "started": "x"}) is None
+
+
+def test_every_integration_is_watched_by_default_but_a_stored_choice_stays():
+    from custom_components.integrationguard.models import Settings
+
+    assert Settings().runtime_include_all is True
+    assert Settings.from_dict({}).runtime_include_all is True
+    assert (
+        Settings.from_dict({"runtime_include_all": False}).runtime_include_all is False
+    )

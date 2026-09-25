@@ -12,7 +12,7 @@ import logging
 from typing import Any
 
 from homeassistant.components import persistent_notification
-from homeassistant.core import HomeAssistant
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.helpers.template import Template
 from homeassistant.util import dt as dt_util
 
@@ -20,7 +20,12 @@ from ..channels import HANDLERS, ChannelError, RenderedMessage
 from ..const import DOMAIN, REPAIR_SEVERITY, RUNTIME_SEVERITY
 from ..l10n import normalise, translate
 from ..models import Channel, Config, QuietHours, RuntimeInfo
-from .messages import Message, build_runtime_message
+from .messages import (
+    Message,
+    Notice,
+    build_runtime_message,
+    build_runtime_recovery_message,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -75,6 +80,43 @@ class Dispatcher:
         self._config = config
         # Runtime messages held back by the quiet hours, by domain.
         self.held_runtime: dict[str, tuple[Message, str]] = {}
+        # Our notifications that are still open in Home Assistant, with the
+        # title and text they show. Lets one be updated without bringing back
+        # one the user dismissed.
+        self._open: dict[str, tuple[str | None, str]] = {}
+        self._unsub_notices: CALLBACK_TYPE | None = None
+
+    @callback
+    def async_start(self) -> None:
+        """Start following which of our notifications are open."""
+        self._unsub_notices = persistent_notification.async_register_callback(
+            self.hass, self._handle_notices
+        )
+
+    @callback
+    def async_stop(self) -> None:
+        """Stop following the notifications."""
+        if self._unsub_notices is not None:
+            self._unsub_notices()
+            self._unsub_notices = None
+
+    @callback
+    def _handle_notices(
+        self,
+        update_type: persistent_notification.UpdateType,
+        notifications: dict[str, persistent_notification.Notification],
+    ) -> None:
+        """Keep the list of open notifications current."""
+        if update_type == persistent_notification.UpdateType.REMOVED:
+            for notification_id in notifications:
+                self._open.pop(notification_id, None)
+            return
+        for notification_id, notification in notifications.items():
+            if notification_id.startswith(f"{DOMAIN}_"):
+                self._open[notification_id] = (
+                    notification["title"],
+                    notification["message"],
+                )
 
     @property
     def language(self) -> str:
@@ -104,13 +146,11 @@ class Dispatcher:
             )
             return
 
-        if severity.persistent_notification:
-            persistent_notification.async_create(
-                self.hass,
-                message.body if not message.url else f"{message.body}\n\n{message.url}",
-                title=message.title,
-                notification_id=f"{DOMAIN}_{message.severity_id}",
-            )
+        # Good news does not get a notification of its own; the one about the
+        # problem is removed instead.
+        if severity.persistent_notification and not message.is_recovery:
+            for notice in message.notices:
+                self._create(notice)
 
         for channel_id in severity.channels:
             channel = self._config.channel(channel_id)
@@ -118,22 +158,51 @@ class Dispatcher:
                 continue
             await self._async_deliver(channel, message)
 
-    async def async_send_runtime(self, info: RuntimeInfo, now: datetime) -> bool:
+    @callback
+    def show(self, message: Message) -> None:
+        """Show a message's notifications again, without sending anything."""
+        severity = self._config.severity(message.severity_id)
+        if severity is None or not severity.persistent_notification:
+            return
+        for notice in message.notices:
+            self._create(notice)
+
+    @callback
+    def dismiss(self, notification_id: str) -> None:
+        """Remove one of our notifications, if it is still there."""
+        persistent_notification.async_dismiss(self.hass, notification_id)
+
+    @callback
+    def refresh_runtime(self, info: RuntimeInfo, *, reopen: bool = False) -> None:
+        """Bring an open notification about an integration up to date.
+
+        Nothing is sent anywhere else, and a notification the user already
+        dismissed stays dismissed — unless reopen asks to show it again, which
+        is for bringing back what a restart took away.
+        """
+        severity_id = _runtime_severity(info)
+        if severity_id is None:
+            return
+        severity = self._config.severity(severity_id)
+        if severity is None or not severity.persistent_notification:
+            return
+        message = build_runtime_message(info, severity_id, self.language)
+        for notice in message.notices:
+            shown = self._open.get(notice.notification_id)
+            if shown is None and not reopen:
+                continue
+            if shown != (notice.title, notice.body):
+                self._create(notice)
+
+    async def async_send_runtime(self, info: RuntimeInfo, now: datetime) -> bool | None:
         """Announce one runtime change, or hold it for the quiet hours.
 
-        Returns True when it went out, False when it was held.
+        Returns True when it went out, False when it was held and None when
+        there was nothing to say.
         """
-        severity_id = RUNTIME_SEVERITY.get(info.state)
-        if severity_id is None and info.repairs:
-            worst = max(
-                (issue.severity or "warning" for issue in info.repairs),
-                key=lambda name: (
-                    list(REPAIR_SEVERITY).index(name) if name in REPAIR_SEVERITY else 0
-                ),
-            )
-            severity_id = REPAIR_SEVERITY.get(worst)
+        severity_id = _runtime_severity(info)
         if severity_id is None:
-            return True
+            return None
 
         message = build_runtime_message(info, severity_id, self.language)
         if self.is_held(message, now):
@@ -145,17 +214,58 @@ class Dispatcher:
         await self.async_send(message)
         return True
 
-    async def async_flush_runtime(self, states: dict[str, RuntimeInfo]) -> None:
-        """Send what the quiet hours held back, if it still applies."""
+    async def async_send_runtime_recovery(
+        self, domain: str, name: str, now: datetime
+    ) -> None:
+        """Say that an integration works again, if the user wants to hear it."""
+        if not self._config.settings.notify_on_recovery:
+            return
+        message = build_runtime_recovery_message(
+            self._config, domain, name, self.language
+        )
+        if message is None:
+            return
+        if self.is_held(message, now):
+            self.held_runtime[domain] = (message, "")
+            return
+        await self.async_send(message)
+
+    async def async_flush_runtime(self, states: dict[str, RuntimeInfo]) -> list[str]:
+        """Send what the quiet hours held back, if it still applies.
+
+        Returns the domains whose problem went out.
+        """
         held, self.held_runtime = self.held_runtime, {}
+        announced: list[str] = []
         for domain, (message, state) in held.items():
             current = states.get(domain)
-            if current is None or current.state != state or not current.problem:
+            if message.is_recovery:
+                # It broke again in the meantime, so the good news is stale.
+                still_valid = current is None or not current.problem
+            else:
+                still_valid = (
+                    current is not None and current.state == state and current.problem
+                )
+            if not still_valid:
                 _LOGGER.debug(
-                    "Dropping the held message about %s, it resolved itself", domain
+                    "Dropping the held message about %s, it no longer applies",
+                    domain,
                 )
                 continue
             await self.async_send(message)
+            if not message.is_recovery:
+                announced.append(domain)
+        return announced
+
+    @callback
+    def _create(self, notice: Notice) -> None:
+        """Show one notification, replacing an older one about the same thing."""
+        persistent_notification.async_create(
+            self.hass,
+            notice.body,
+            title=notice.title,
+            notification_id=notice.notification_id,
+        )
 
     async def async_test(self, channel: Channel) -> None:
         """Send a test message, raising ChannelError when it does not work."""
@@ -212,3 +322,17 @@ class Dispatcher:
         except Exception:
             _LOGGER.exception("Template of a channel could not be rendered")
             return fallback
+
+
+def _runtime_severity(info: RuntimeInfo) -> str | None:
+    """Return the severity a runtime problem is announced with."""
+    severity_id = RUNTIME_SEVERITY.get(info.state)
+    if severity_id is None and info.repairs:
+        worst = max(
+            (issue.severity or "warning" for issue in info.repairs),
+            key=lambda name: (
+                list(REPAIR_SEVERITY).index(name) if name in REPAIR_SEVERITY else 0
+            ),
+        )
+        severity_id = REPAIR_SEVERITY.get(worst)
+    return severity_id

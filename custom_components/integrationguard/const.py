@@ -232,6 +232,12 @@ RUNTIME_PROBLEM_STATES: Final = frozenset(
     }
 )
 
+# Normal for a while: after a restart, or when a device drops out briefly.
+# These are only reported once they outlast the grace period.
+RUNTIME_GRACE_STATES: Final = frozenset(
+    {RuntimeState.SETUP_RETRY, RuntimeState.NOT_LOADED}
+)
+
 # These resolve themselves or they do not; there is no point in waiting.
 RUNTIME_IMMEDIATE_STATES: Final = frozenset(
     {RuntimeState.SETUP_ERROR, RuntimeState.MIGRATION_ERROR}

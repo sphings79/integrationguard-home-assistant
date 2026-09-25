@@ -173,8 +173,8 @@ lives in the **IntegrationGuard** panel in the sidebar.
 | Check usage of | all but AppDaemon | Which kinds are checked for being used |
 | Look for leftovers | on | Dead Lovelace resources and unknown folders |
 | Watch config entries | on | The runtime pillar |
-| All integrations | off | On: core integrations too, not just the ones from HACS |
-| Grace period | 15 minutes | How long a retrying config entry stays quiet |
+| All integrations | on | Off: only the integrations that came from HACS |
+| Grace period | 15 minutes | How long a retrying or not yet loaded config entry stays quiet |
 | Quiet hours | off | Notifications are held and go out afterwards |
 | Panel access | administrators | Or everyone |
 | Keep history for | 365 days | Retention of the change log |
@@ -385,7 +385,8 @@ only for a while. An ignored repository counts towards nothing.
 
 - **No updating.** That is HACS' job.
 - **No uninstalling.** It shows, it does not clean up.
-- **No judging core integrations.** Only what came through HACS, plus apps.
+- **No judging core integrations.** Health and usage only cover what came
+  through HACS, plus apps. Whether a core integration runs is watched, though.
 - **No entity monitoring.** Whether a device answers is a different question —
   that is what [StateGuard](https://github.com/sphings79/stateguard-home-assistant)
   is for.

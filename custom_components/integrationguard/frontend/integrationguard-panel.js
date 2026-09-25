@@ -1,4 +1,4 @@
-import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j as z,k as N,m as I,n as R,r as m,a as W,E as F,f as L,b as P,l as j,t as D}from"./integrationguard-shared.js";class H{constructor(e){this.hass=e}update(e){this.hass=e}get(){return this.hass.callWS({type:"integrationguard/get"})}scan(e=!1){return this.hass.callWS({type:"integrationguard/scan",force:e})}saveSettings(e,a){const i={type:"integrationguard/settings/save",settings:e};return a!==void 0&&(i.github_token=a),this.hass.callWS(i)}saveRules(e){return this.hass.callWS({type:"integrationguard/rules/save",rules:e})}saveSeverities(e){return this.hass.callWS({type:"integrationguard/severities/save",severities:e})}saveChannel(e){return this.hass.callWS({type:"integrationguard/channels/save",channel:e})}deleteChannel(e){return this.hass.callWS({type:"integrationguard/channels/delete",channel_id:e})}testChannel(e){return this.hass.callWS({type:"integrationguard/channels/test",channel:e})}ignore(e,a,i=null,l=""){return this.hass.callWS({type:"integrationguard/ignore",key:e,ignored:a,until:i,reason:l})}markUsed(e,a){return this.hass.callWS({type:"integrationguard/mark_used",key:e,used:a})}history(e){return this.hass.callWS({type:"integrationguard/history",...e})}}const G=U`
+import{i as U,c as n,A as d,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j as z,k as N,m as I,n as R,r as m,a as W,E as F,f as L,b as P,l as j,t as D}from"./integrationguard-shared.js";class H{constructor(e){this.hass=e}update(e){this.hass=e}get(){return this.hass.callWS({type:"integrationguard/get"})}scan(e=!1){return this.hass.callWS({type:"integrationguard/scan",force:e})}saveSettings(e,a){const i={type:"integrationguard/settings/save",settings:e};return a!==void 0&&(i.github_token=a),this.hass.callWS(i)}saveRules(e){return this.hass.callWS({type:"integrationguard/rules/save",rules:e})}saveSeverities(e){return this.hass.callWS({type:"integrationguard/severities/save",severities:e})}saveChannel(e){return this.hass.callWS({type:"integrationguard/channels/save",channel:e})}deleteChannel(e){return this.hass.callWS({type:"integrationguard/channels/delete",channel_id:e})}testChannel(e){return this.hass.callWS({type:"integrationguard/channels/test",channel:e})}ignore(e,a,i=null,l=""){return this.hass.callWS({type:"integrationguard/ignore",key:e,ignored:a,until:i,reason:l})}markUsed(e,a){return this.hass.callWS({type:"integrationguard/mark_used",key:e,used:a})}history(e){return this.hass.callWS({type:"integrationguard/history",...e})}}const G=U`
   :host {
     --ig-gap: 16px;
     --ig-radius: var(--ha-card-border-radius, 12px);
@@ -272,7 +272,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
       <textarea
         rows="3"
         .value=${r?JSON.stringify(r,null,2):""}
-        @change=${p=>{const u=p.target.value.trim();if(!u)return t(void 0);try{t(JSON.parse(u))}catch{s.toast(l("common.error"))}}}
+        @change=${p=>{const c=p.target.value.trim();if(!c)return t(void 0);try{t(JSON.parse(c))}catch{s.toast(l("common.error"))}}}
       ></textarea>
     </label>`;const h=a.type==="secret";return n`<label class="field">
     ${o}
@@ -280,9 +280,9 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
       type=${h?"password":a.type==="number"?"number":"text"}
       placeholder=${a.example??""}
       .value=${r==null?"":String(r)}
-      @change=${p=>{const u=p.target.value;t(a.type==="number"?Number(u):u)}}
+      @change=${p=>{const c=p.target.value;t(a.type==="number"?Number(c):c)}}
     />
-    ${h&&r===K?n`<span class="hint">${l("channels.secret_kept")}</span>`:c}
+    ${h&&r===K?n`<span class="hint">${l("channels.secret_kept")}</span>`:d}
   </label>`}function M(s,e){const{t:a,data:i}=s,l=i.channel_fields[e.kind]??[],r=t=>s.patchUi({editingChannel:{...e,...t}});return n`
     <div class="card">
       <h2>${e.id?e.name||a("channels.name"):a("channels.add")}</h2>
@@ -355,7 +355,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
               @click=${()=>s.deleteChannel(e.id)}
             >
               ${a("common.delete")}
-            </button>`:c}
+            </button>`:d}
       </div>
     </div>
   `}function V(s){const{t:e,data:a,ui:i}=s;return i.editingChannel?M(s,i.editingChannel):n`
@@ -374,7 +374,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
                     </div>
                     <div class="sub">${e(`kind.${l.kind}`)}</div>
                   </div>
-                  ${l.enabled?c:n`<span class="chip small">${e("common.no")}</span>`}
+                  ${l.enabled?d:n`<span class="chip small">${e("common.no")}</span>`}
                 </div>
               `)}
           </div>`}
@@ -447,12 +447,12 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
     </svg>
   `}function y(s,e,a){return n`
     <div class="tile">
-      <div class="tile-value" style=${a?`color:${a}`:c}>
+      <div class="tile-value" style=${a?`color:${a}`:d}>
         ${e}
       </div>
       <div class="tile-label">${s}</div>
     </div>
-  `}function X(s){const{t:e,data:a}=s,i=a.repositories.filter(d=>!d.ignored),l=i.filter(d=>d.status!=="healthy"),r=i.filter(d=>d.usage==="unused"),t=a.runtime.filter(d=>d.problem),o=a.runtime.reduce((d,g)=>d+g.repairs.length,0),h=[...l].sort((d,g)=>d.score-g.score).slice(0,8),p=A.map(d=>[d,i.filter(g=>g.status===d).length]).filter(([,d])=>d>0),u=Object.entries(a.scan.errors),f=([d,g])=>{const w=`overview.error.${d}`,S=e(w);return S===w?`${d}: ${g}`:S};return n`
+  `}function X(s){const{t:e,data:a}=s,i=a.repositories.filter(u=>!u.ignored),l=i.filter(u=>u.status!=="healthy"),r=i.filter(u=>u.usage==="unused"),t=a.runtime.filter(u=>u.problem),o=a.runtime.reduce((u,g)=>u+g.repairs.length,0),h=[...l].sort((u,g)=>u.score-g.score).slice(0,8),p=A.map(u=>[u,i.filter(g=>g.status===u).length]).filter(([,u])=>u>0),c=Object.entries(a.scan.errors),f=([u,g])=>{const w=`overview.error.${u}`,S=e(w);return S===w?`${u}: ${g}`:S};return n`
     <div class="card">
       <div class="row wrap head">
         ${Y(a.scan.score)}
@@ -480,42 +480,42 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
       </div>
 
       ${p.length?n`<div class="bar">
-            ${p.map(([d,g])=>n`
+            ${p.map(([u,g])=>n`
                 <div
                   class="bar-part"
-                  style="flex:${g};background:${v[d]}"
-                  title="${e(`status.${d}`)}: ${g}"
+                  style="flex:${g};background:${v[u]}"
+                  title="${e(`status.${u}`)}: ${g}"
                 ></div>
               `)}
-          </div>`:c}
+          </div>`:d}
 
-      ${u.length?n`<p class="error">
+      ${c.length?n`<p class="error">
             ${e("overview.errors")}
-            ${u.map(d=>n`<br />${f(d)}`)}
-          </p>`:c}
-      ${a.scan.has_token?c:n`<p class="hint">${e("overview.no_token")}</p>`}
+            ${c.map(u=>n`<br />${f(u)}`)}
+          </p>`:d}
+      ${a.scan.has_token?d:n`<p class="hint">${e("overview.no_token")}</p>`}
       ${a.scan.github_pending?n`<p class="hint">
             ${e("overview.github_pending",{count:a.scan.github_pending})}
-          </p>`:c}
+          </p>`:d}
       ${a.scan.github_remaining!==null?n`<p class="hint">
             ${e("overview.github_budget",{count:a.scan.github_remaining})}
-          </p>`:c}
+          </p>`:d}
     </div>
 
     <div class="card">
       <h2>${e("overview.worst")}</h2>
       ${a.scan.last?h.length===0?n`<p class="empty">${e("overview.nothing_wrong")}</p>`:n`<div class="list">
-              ${h.map(d=>n`
+              ${h.map(u=>n`
                   <div
                     class="list-item clickable"
-                    @click=${()=>s.open(d.key)}
+                    @click=${()=>s.open(u.key)}
                   >
                     <div class="grow">
-                      <div class="name">${d.name}</div>
-                      <div class="sub">${d.key}</div>
+                      <div class="name">${u.name}</div>
+                      <div class="sub">${u.key}</div>
                     </div>
-                    <span class="score">${d.score}</span>
-                    ${_(e,d.status)}
+                    <span class="score">${u.score}</span>
+                    ${_(e,u.status)}
                   </div>
                 `)}
             </div>`:n`<p class="empty">${e("overview.never_scanned")}</p>`}
@@ -529,23 +529,23 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
         <div class="spacer"></div>
         ${e.url?n`<a class="ghost" href=${e.url} target="_blank" rel="noreferrer"
               >${a("repo.github")}</a
-            >`:c}
-        ${e.hacs_url?n`<a class="ghost" href=${e.hacs_url}>${a("repo.manage")}</a>`:c}
+            >`:d}
+        ${e.hacs_url?n`<a class="ghost" href=${e.hacs_url}>${a("repo.manage")}</a>`:d}
       </div>
 
       <h2>${e.name}</h2>
       <p class="sub">${e.key}</p>
-      ${e.description?n`<p>${e.description}</p>`:c}
+      ${e.description?n`<p>${e.description}</p>`:d}
 
       <div class="row wrap chips">
         ${_(a,e.status)} ${x(a,e.usage)}
         ${e.usage_confidence?n`<span class="chip"
               >${a(`confidence.${e.usage_confidence}`)}</span
-            >`:c}
+            >`:d}
         <span class="chip">${a(`category.${e.category}`)}</span>
-        ${e.is_default_store?c:n`<span class="chip">${a("repo.custom")}</span>`}
-        ${e.ignored?n`<span class="chip">${a("repo.ignored")}</span>`:c}
-        ${s.data.marked_used.includes(e.key)?n`<span class="chip">${a("repo.marked_used")}</span>`:c}
+        ${e.is_default_store?d:n`<span class="chip">${a("repo.custom")}</span>`}
+        ${e.ignored?n`<span class="chip">${a("repo.ignored")}</span>`:d}
+        ${s.data.marked_used.includes(e.key)?n`<span class="chip">${a("repo.marked_used")}</span>`:d}
       </div>
 
       <div class="facts">
@@ -582,7 +582,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
                 <span>${a("repo.app_boot")}</span>
                 <b>${e.app_boot==="auto"?a("common.yes"):a("common.no")}</b>
               </div>
-            `:c}
+            `:d}
       </div>
 
       <h3>${a("repo.findings")}</h3>
@@ -665,14 +665,14 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
                       ${r.name}
                       ${r.ignored?n`<span class="chip small"
                             >${e("repo.ignored")}</span
-                          >`:c}
+                          >`:d}
                     </div>
                     <div class="sub">
                       ${r.key} · ${e(`category.${r.category}`)}
                     </div>
                   </div>
                   <span class="score">${r.score}</span>
-                  ${r.usage==="unused"||r.usage==="not_registered"?x(e,r.usage):c}
+                  ${r.usage==="unused"||r.usage==="not_registered"?x(e,r.usage):d}
                   ${_(e,r.status)}
                 </div>
               `)}
@@ -692,22 +692,22 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
 
     <div class="card flush">
       <div class="list">
-        ${a.rule_catalogue.map(t=>{const o=i.get(t.id);if(!o)return c;const h=t.categories?.length===1&&t.categories[0]==="app",p=t.categories!==null&&!t.categories?.includes("app");return n`
+        ${a.rule_catalogue.map(t=>{const o=i.get(t.id);if(!o)return d;const h=t.categories?.length===1&&t.categories[0]==="app",p=t.categories!==null&&!t.categories?.includes("app");return n`
             <div class="list-item rule">
               <label class="checkbox">
                 <input
                   type="checkbox"
                   .checked=${o.enabled}
                   ?disabled=${s.busy}
-                  @change=${u=>l(o.id,{enabled:u.target.checked})}
+                  @change=${c=>l(o.id,{enabled:c.target.checked})}
                 />
               </label>
               <div class="grow">
                 <div class="name">${e(`rule.${o.id}`)}</div>
                 <div class="sub">
-                  ${t.requires_github?n`<span class="chip small">${e("rules.needs_token")}</span>`:c}
-                  ${h?n`<span class="chip small">${e("rules.apps_only")}</span>`:c}
-                  ${p?n`<span class="chip small">${e("rules.hacs_only")}</span>`:c}
+                  ${t.requires_github?n`<span class="chip small">${e("rules.needs_token")}</span>`:d}
+                  ${h?n`<span class="chip small">${e("rules.apps_only")}</span>`:d}
+                  ${p?n`<span class="chip small">${e("rules.hacs_only")}</span>`:d}
                 </div>
               </div>
               ${t.threshold_unit?n`<label class="field small">
@@ -718,13 +718,13 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
                         min="0"
                         .value=${String(o.threshold??"")}
                         ?disabled=${s.busy||!o.enabled}
-                        @change=${u=>l(o.id,{threshold:Number(u.target.value)})}
+                        @change=${c=>l(o.id,{threshold:Number(c.target.value)})}
                       />
                       <span class="suffix"
                         >${t.threshold_unit==="days"?e("common.days"):""}</span
                       >
                     </span>
-                  </label>`:c}
+                  </label>`:d}
               <label class="field small">
                 <span>${e("rules.penalty")}</span>
                 <input
@@ -733,21 +733,21 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
                   max="100"
                   .value=${String(o.penalty)}
                   ?disabled=${s.busy||!o.enabled}
-                  @change=${u=>l(o.id,{penalty:Number(u.target.value)})}
+                  @change=${c=>l(o.id,{penalty:Number(c.target.value)})}
                 />
               </label>
               <label class="field severity-field">
                 <span>${e("rules.severity")}</span>
                 <select
                   ?disabled=${s.busy||!o.enabled}
-                  @change=${u=>l(o.id,{severity_id:u.target.value})}
+                  @change=${c=>l(o.id,{severity_id:c.target.value})}
                 >
-                  ${a.severities.map(u=>n`
+                  ${a.severities.map(c=>n`
                       <option
-                        value=${u.id}
-                        ?selected=${u.id===o.severity_id}
+                        value=${c.id}
+                        ?selected=${c.id===o.severity_id}
                       >
-                        ${u.name}
+                        ${c.name}
                       </option>
                     `)}
                 </select>
@@ -821,35 +821,39 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
           `)}
       </div>
     </div>
-  `}function te(s,e){return e?"var(--secondary-text-color)":s==="ok"?v.stale:v.abandoned}function ie(s){const{t:e,data:a}=s,i=a.runtime.filter(t=>t.problem),l=a.runtime.filter(t=>!t.problem&&t.state!=="ok"),r=(t,o)=>n`
+  `}function te(s,e){return e?"var(--secondary-text-color)":s==="ok"?v.stale:v.abandoned}function ie(s){const{t:e,data:a}=s,i=a.runtime.filter(t=>t.problem),l=a.runtime.filter(t=>!t.problem&&t.state!=="ok"),r=(t,o)=>{const h=t.entries.filter(c=>(t.affected??[]).includes(c.entry_id)),p=h.length>1;return n`
     <div class="list-item">
       <div class="grow">
-        <div class="name">${t.title||t.domain}</div>
+        <div class="name">
+          ${p?`${t.name||t.domain} (${h.length})`:t.title||t.domain}
+        </div>
         <div class="sub">
           ${t.domain} · ${e(`runtime.${t.state}`)}
           ${t.since?` · ${e("runtime.since",{time:k(t.since,s.language)})}`:""}
           ${o?` · ${e("runtime.waiting")}`:""}
         </div>
-        ${t.reason?n`<div class="sub reason">${t.reason}</div>`:c}
+        ${p?h.map(c=>n`<div class="sub reason">
+                  ${c.reason?`${c.title}: ${c.reason}`:c.title}
+                </div>`):t.reason?n`<div class="sub reason">${t.reason}</div>`:d}
         ${t.repairs.length?n`<div class="sub">
               ${e("runtime.repairs")}:
-              ${t.repairs.map(h=>h.translation_key||h.issue_id).join(", ")}
-            </div>`:c}
+              ${t.repairs.map(c=>c.translation_key||c.issue_id).join(", ")}
+            </div>`:d}
         ${t.entries.length>1?n`<div class="sub">
               ${e("runtime.entries",{count:t.entries.length})}
-            </div>`:c}
+            </div>`:d}
       </div>
       <a class="ghost" href=${t.configuration_url}>${e("runtime.open")}</a>
       ${t.url?n`<a class="ghost" href=${t.url} target="_blank" rel="noreferrer"
             >${e("repo.github")}</a
-          >`:c}
+          >`:d}
       <span
         class="badge solid"
         style="background:${te(t.state,o)}"
         >${e(`runtime.${t.state}`)}</span
       >
     </div>
-  `;return n`
+  `};return n`
     <div class="card">
       <h2>${e("runtime.title")}</h2>
       ${i.length===0&&l.length===0?n`<p class="empty">${e("runtime.no_problems")}</p>`:n`<div class="list">
@@ -867,7 +871,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
                 type="checkbox"
                 .checked=${o.includes(p)}
                 ?disabled=${s.busy}
-                @change=${u=>{const d=u.target.checked?[...o,p]:o.filter(g=>g!==p);l({[h]:d})}}
+                @change=${c=>{const u=c.target.checked?[...o,p]:o.filter(g=>g!==p);l({[h]:u})}}
               />
               ${e(`category.${p}`)}
             </label>
@@ -926,7 +930,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
           >${e("settings.github_token_link")}</a
         >
       </p>
-      ${a.scan.has_token?n`<p class="hint">${e("settings.github_token_set")}</p>`:c}
+      ${a.scan.has_token?n`<p class="hint">${e("settings.github_token_set")}</p>`:d}
       <label class="field wide">
         <span>${e("settings.github_token")}</span>
         <input
@@ -1026,7 +1030,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
                   type="checkbox"
                   .checked=${i.quiet_hours.weekdays.length===0||i.quiet_hours.weekdays.includes(t)}
                   ?disabled=${s.busy||!i.quiet_hours.enabled}
-                  @change=${o=>{const h=o.target.checked,p=i.quiet_hours.weekdays.length===0?[...C]:i.quiet_hours.weekdays,u=h?[...new Set([...p,t])].sort():p.filter(f=>f!==t);l({quiet_hours:{...i.quiet_hours,weekdays:u}})}}
+                  @change=${o=>{const h=o.target.checked,p=i.quiet_hours.weekdays.length===0?[...C]:i.quiet_hours.weekdays,c=h?[...new Set([...p,t])].sort():p.filter(f=>f!==t);l({quiet_hours:{...i.quiet_hours,weekdays:c}})}}
                 />
                 ${e(`weekday.${t}`)}
               </label>
@@ -1102,7 +1106,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
     <div class="card">
       <h2>${e("unused.title")}</h2>
       <p class="hint">${e("unused.description")}</p>
-      ${t?n`<p class="hint">${e("unused.uncertain")}</p>`:c}
+      ${t?n`<p class="hint">${e("unused.uncertain")}</p>`:d}
       ${l.length===0?n`<p class="empty">${e("unused.none")}</p>`:q(s,l)}
     </div>
 
@@ -1110,7 +1114,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
           <h2>${e("unused.undetermined_title")}</h2>
           <p class="hint">${e("unused.undetermined_description")}</p>
           ${q(s,r)}
-        </div>`:c}
+        </div>`:d}
 
     ${a.settings.check_orphans?n`<div class="card">
           <h2>${e("unused.orphans")}</h2>
@@ -1126,7 +1130,7 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
                     </div>
                   `)}
               </div>`}
-        </div>`:c}
+        </div>`:d}
   `}var ce=Object.defineProperty,de=Object.getOwnPropertyDescriptor,$=(s,e,a,i)=>{for(var l=i>1?void 0:i?de(e,a):e,r=s.length-1,t;r>=0;r--)(t=s[r])&&(l=(i?t(e,a,l):t(l))||l);return i&&l&&ce(e,a,l),l};const pe=["rules","channels","settings"];let b=class extends W{constructor(){super(...arguments),this.narrow=!1,this.data=null,this.tab="overview",this.busy=!1,this.message="",this.ui={...F},this.localizeFn=L,this.api=null,this.catalogueFor=""}get isAdmin(){return this.hass?.user?.is_admin??!1}willUpdate(){this.hass&&(this.api?this.api.update(this.hass):(this.api=new H(this.hass),this.load()),this.syncCatalogue())}get language(){const s=this.data?.settings.ui_language;return s&&s!=="auto"?s:this.hass?.language||"en"}async syncCatalogue(){const s=this.language;s!==this.catalogueFor&&(this.catalogueFor=s,this.localizeFn=P(await j(s)))}async load(){if(this.api)try{this.data=await this.api.get()}catch(s){this.message=String(s?.message??s)}}async run(s,e){if(!this.busy){this.busy=!0;try{await s(),e&&this.toast(e)}catch(a){this.toast(String(a?.message??this.localizeFn("common.error")))}finally{this.busy=!1,await this.load()}}}toast(s){this.message=s,window.setTimeout(()=>{this.message===s&&(this.message="")},4e3)}context(){const s=this.localizeFn;return{t:s,data:this.data,language:this.language,busy:this.busy,ui:this.ui,patchUi:e=>{this.ui={...this.ui,...e}},open:e=>{this.tab="repositories",this.ui={...this.ui,selected:e,search:"",category:"",status:"",usage:"",showIgnored:!0}},scan:(e=!1)=>void this.run(()=>this.api.scan(e)),saveSettings:(e,a)=>void this.run(()=>this.api.saveSettings(e,a),s("common.saved")),saveRules:e=>void this.run(()=>this.api.saveRules(e),s("common.saved")),saveSeverities:e=>void this.run(()=>this.api.saveSeverities(e),s("common.saved")),saveChannel:e=>void this.run(async()=>{await this.api.saveChannel(e),this.ui={...this.ui,editingChannel:null}},s("common.saved")),deleteChannel:e=>void this.run(async()=>{await this.api.deleteChannel(e),this.ui={...this.ui,editingChannel:null}}),testChannel:e=>void this.run(()=>this.api.testChannel(e),s("channels.test_ok")),ignore:(e,a)=>void this.run(()=>this.api.ignore(e,a)),markUsed:(e,a)=>void this.run(()=>this.api.markUsed(e,a)),loadHistory:()=>void this.fetchHistory(),toast:e=>this.toast(e)}}async fetchHistory(){if(!(!this.api||this.ui.history!==null)){this.ui={...this.ui,history:[]};try{const s=await this.api.history({limit:200,kind:this.ui.historyKind||null});this.ui={...this.ui,history:s.events}}catch{this.ui={...this.ui,history:[]}}}}tabs(){const s=this.data,e=s?.repositories.filter(i=>!i.ignored)??[],a=[["overview","tab.overview",null],["repositories","tab.repositories",e.length],["unused","tab.unused",e.filter(i=>i.usage==="unused"||i.usage==="not_registered").length],["runtime","tab.runtime",(s?.runtime??[]).filter(i=>i.problem).length],["rules","tab.rules",null],["channels","tab.channels",null],["history","tab.history",null],["settings","tab.settings",null]];return this.isAdmin?a:a.filter(([i])=>!pe.includes(i))}body(){const s=this.context();switch(this.tab){case"repositories":return ee(s);case"unused":return oe(s);case"runtime":return ie(s);case"rules":return se(s);case"channels":return V(s);case"history":return J(s);case"settings":return le(s);default:return X(s)}}render(){const s=this.localizeFn;return this.data?n`
       <header>
         <h1>IntegrationGuard</h1>
@@ -1138,12 +1142,12 @@ import{i as U,c as n,A as c,e as k,s as _,S as A,d as v,g as O,u as x,h as T,j a
               @click=${()=>{this.tab=e,this.ui={...this.ui,selected:null,editingChannel:null}}}
             >
               ${s(a)}
-              ${i?n`<span class="count">${i}</span>`:c}
+              ${i?n`<span class="count">${i}</span>`:d}
             </button>
           `)}
       </nav>
       ${this.body()}
-      ${this.message?n`<div class="toast">${this.message}</div>`:c}
+      ${this.message?n`<div class="toast">${this.message}</div>`:d}
     `:n`<div class="card"><p class="empty">${s("common.loading")}</p></div>`}};b.styles=[G,U`
       :host {
         display: block;

@@ -269,9 +269,8 @@ export const de: Record<string, string> = {
   "settings.runtime_enabled": "Config-Entries und Reparaturmeldungen beobachten",
   "settings.runtime_include_all":
     "Alle Integrationen, nicht nur die aus HACS",
-  "settings.runtime_grace": "Karenzzeit für wiederholende Einträge",
-  "settings.runtime_grace_hint":
-    "Ein Config-Entry, der es immer wieder versucht, ist nach einem Neustart eine Weile normal. Gemeldet wird er erst, wenn er so lange in diesem Zustand ist.",
+  "settings.runtime_grace": "Karenzzeit für wiederholende oder noch nicht geladene Einträge",
+  "settings.runtime_grace_hint": "Ein Config-Entry, der es immer wieder versucht oder noch nicht geladen ist, ist nach einem Neustart eine Weile normal. Gemeldet wird er erst, wenn er so lange in diesem Zustand ist.",
   "settings.notifications": "Benachrichtigungen",
   "settings.notify_on_recovery": "Auch melden, wenn etwas wieder in Ordnung ist",
   "settings.quiet_hours": "Ruhezeiten",

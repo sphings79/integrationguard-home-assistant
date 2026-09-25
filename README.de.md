@@ -178,8 +178,8 @@ Alles andere steht im **IntegrationGuard**-Panel in der Seitenleiste.
 | Nutzung prüfen bei | alle außer AppDaemon | Was auf Verwendung geprüft wird |
 | Nach Verwaistem suchen | an | Tote Lovelace-Ressourcen und unbekannte Ordner |
 | Config-Entries beobachten | an | Die Laufzeit-Säule |
-| Alle Integrationen | aus | An: auch Core-Integrationen, nicht nur die aus HACS |
-| Karenzzeit | 15 Minuten | Wie lange ein wiederholender Config-Entry still bleibt |
+| Alle Integrationen | an | Aus: nur die Integrationen aus HACS |
+| Karenzzeit | 15 Minuten | Wie lange ein wiederholender oder noch nicht geladener Config-Entry still bleibt |
 | Ruhezeiten | aus | Benachrichtigungen werden zurückgehalten und danach nachgeholt |
 | Panel-Zugriff | Administratoren | Oder alle |
 | Verlauf aufbewahren | 365 Tage | Aufbewahrung der Änderungshistorie |
@@ -394,7 +394,9 @@ eine Weile. Ein ignoriertes Repository zählt nirgends mit.
 
 - **Kein Aktualisieren.** Das ist HACS' Aufgabe.
 - **Kein Deinstallieren.** Es zeigt an, es räumt nicht auf.
-- **Keine Bewertung von Core-Integrationen.** Nur was über HACS kam, plus Apps.
+- **Keine Bewertung von Core-Integrationen.** Zustand und Nutzung gibt es nur
+  für das, was über HACS kam, plus Apps. Ob eine Core-Integration läuft, wird
+  aber beobachtet.
 - **Keine Entitätsüberwachung.** Ob ein Gerät antwortet, ist eine andere Frage —
   dafür gibt es [StateGuard](https://github.com/sphings79/stateguard-home-assistant).
 

@@ -267,9 +267,8 @@ export const en: Record<string, string> = {
   "settings.runtime_enabled": "Watch config entries and repair messages",
   "settings.runtime_include_all":
     "All integrations, not only the ones from HACS",
-  "settings.runtime_grace": "Grace period for retrying entries",
-  "settings.runtime_grace_hint":
-    "A config entry that keeps retrying is normal for a while after a restart. It is only reported once it has been retrying this long.",
+  "settings.runtime_grace": "Grace period for retrying or not yet loaded entries",
+  "settings.runtime_grace_hint": "A config entry that keeps retrying or is not loaded yet is normal for a while after a restart. It is only reported once it has been in that state this long.",
   "settings.notifications": "Notifications",
   "settings.notify_on_recovery": "Also say when something is fixed",
   "settings.quiet_hours": "Quiet hours",

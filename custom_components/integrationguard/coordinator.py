@@ -32,9 +32,12 @@ from .history import History
 from .models import Config, RepositoryHealth, RepositoryInfo, RuntimeInfo, ScanResult
 from .notify.dispatcher import Dispatcher, next_quiet_end
 from .notify.messages import (
+    Change,
     build_problem_messages,
     build_recovery_message,
     collect_changes,
+    repository_notice_id,
+    runtime_notice_id,
 )
 from .runtime.monitor import RuntimeMonitor
 from .sources import apps as apps_source, hacs as hacs_source
@@ -72,6 +75,15 @@ class IntegrationGuardCoordinator:
         # What the user has actually been told, which is not the same as what
         # the last scan found: the quiet hours may have held something back.
         self._announced: dict[str, str] = {}
+        # The same for integrations: domain -> the name it was announced as.
+        # Only these get a "working again", and only these have a
+        # notification to remove.
+        self._runtime_announced: dict[str, str] = {}
+        # Notifications live in memory only, so a restart takes them all.
+        # The first runtime report afterwards brings back what still applies.
+        self._runtime_restored = False
+        # Set when updating from a version that did not remember the above.
+        self._runtime_seed = False
         self._unsub_quiet: Any = None
         self._previous: dict[str, str] = {}
         self._last_scan: str | None = None
@@ -105,6 +117,8 @@ class IntegrationGuardCoordinator:
         self.runtime.restore(state.get("runtime"))
         self._previous = dict(state.get("previous") or {})
         self._announced = dict(state.get("announced") or {})
+        self._runtime_announced = dict(state.get("runtime_announced") or {})
+        self._runtime_seed = "runtime_announced" not in state
         # Without this every sensor and the whole panel would be empty until
         # the first scan after a restart, several minutes later.
         self.result = ScanResult.from_state(state.get("result"))
@@ -118,6 +132,8 @@ class IntegrationGuardCoordinator:
 
         await self.history.async_setup()
         await self.history.async_purge(self.config.settings.history_retention_days)
+        self.dispatcher.async_start()
+        self._restore_repository_notices()
         await self.runtime.async_start()
         self._unsub_start = async_at_started(self.hass, self._handle_started)
         self._schedule_next()
@@ -125,6 +141,7 @@ class IntegrationGuardCoordinator:
     async def async_stop(self) -> None:
         """Cancel every timer and subscription."""
         await self.runtime.async_stop()
+        self.dispatcher.async_stop()
         for unsub in (self._unsub_timer, self._unsub_start, self._unsub_quiet):
             if unsub is not None:
                 unsub()
@@ -211,7 +228,7 @@ class IntegrationGuardCoordinator:
                     {
                         "kind": "runtime",
                         "key": info.domain,
-                        "name": info.title or info.domain,
+                        "name": info.label,
                         "category": "integration",
                         "status": info.state,
                         "detail": {"reason": info.reason, "problem": info.problem},
@@ -219,13 +236,54 @@ class IntegrationGuardCoordinator:
                     for info in changed
                 ]
             )
-            if self.config.settings.monitoring_enabled:
-                now = dt_util.utcnow()
-                for info in changed:
-                    if info.problem:
-                        await self.dispatcher.async_send_runtime(info, now)
-                self._schedule_quiet_flush()
+        now = dt_util.utcnow()
+        if self.config.settings.monitoring_enabled:
+            for info in changed:
+                if info.problem and await self.dispatcher.async_send_runtime(info, now):
+                    self._runtime_announced[info.domain] = info.name or info.domain
+        await self._async_runtime_recoveries(now)
+        if self.config.settings.monitoring_enabled:
+            self._schedule_quiet_flush()
         await self._async_save_state()
+
+    @callback
+    def _restore_repository_notices(self) -> None:
+        """Bring back the notifications about repositories a restart took."""
+        if self.result is None or not self.config.settings.monitoring_enabled:
+            return
+        changes = [
+            Change(item, Status.HEALTHY)
+            for item in self.result.repositories
+            if not item.ignored
+            and item.status != Status.HEALTHY
+            and self._announced.get(item.key) == item.status
+        ]
+        for message in build_problem_messages(
+            self.config, changes, self.dispatcher.language
+        ):
+            self.dispatcher.show(message)
+
+    async def _async_runtime_recoveries(self, now: datetime) -> None:
+        """Clear up after integrations that work again, update the rest."""
+        reopen = not self._runtime_restored
+        self._runtime_restored = True
+        if self._runtime_seed:
+            # An older version announced these without writing it down.
+            self._runtime_seed = False
+            for domain, info in self.runtime.states.items():
+                if info.problem:
+                    self._runtime_announced.setdefault(domain, info.name or domain)
+        for domain, name in list(self._runtime_announced.items()):
+            info = self.runtime.states.get(domain)
+            if info is not None and info.problem:
+                self.dispatcher.refresh_runtime(info, reopen=reopen)
+                continue
+            del self._runtime_announced[domain]
+            self.dispatcher.dismiss(runtime_notice_id(domain))
+            # Gone from the picture means removed or no longer watched, which
+            # is not the same as working again.
+            if info is not None and self.config.settings.monitoring_enabled:
+                await self.dispatcher.async_send_runtime_recovery(domain, name, now)
 
     async def async_scan(self, *, force: bool = False) -> ScanResult | None:
         """Run one full scan. Concurrent calls wait for the running one."""
@@ -471,10 +529,22 @@ class IntegrationGuardCoordinator:
 
     async def _async_announce(self, result: ScanResult) -> None:
         """Tell the user what changed, unless the quiet hours say otherwise."""
+        # Uninstalled or ignored since: nothing to report, but its
+        # notification has to go.
+        watched = {item.key for item in result.repositories if not item.ignored}
+        for key in [key for key in self._announced if key not in watched]:
+            del self._announced[key]
+            self.dispatcher.dismiss(repository_notice_id(key))
         if not self.config.settings.monitoring_enabled:
             return
         problems, recoveries = collect_changes(result.repositories, self._announced)
+        # The notification about a problem goes as soon as it is fixed, quiet
+        # hours or not; only the message saying so waits.
+        for change in recoveries:
+            self.dispatcher.dismiss(repository_notice_id(change.key))
         if not self.config.settings.notify_on_recovery:
+            for change in recoveries:
+                del self._announced[change.key]
             recoveries = []
         if not problems and not recoveries:
             return
@@ -512,7 +582,11 @@ class IntegrationGuardCoordinator:
 
         async def _flush(_now: datetime) -> None:
             self._unsub_quiet = None
-            await self.dispatcher.async_flush_runtime(self.runtime.states)
+            for domain in await self.dispatcher.async_flush_runtime(
+                self.runtime.states
+            ):
+                info = self.runtime.states[domain]
+                self._runtime_announced[domain] = info.name or domain
             if self.result is not None:
                 await self._async_announce(self.result)
             await self._async_save_state()
@@ -530,6 +604,7 @@ class IntegrationGuardCoordinator:
                 "result": self.result.to_state() if self.result else None,
                 "previous": self._previous,
                 "announced": self._announced,
+                "runtime_announced": self._runtime_announced,
                 "last_scan": self._last_scan,
             }
         )

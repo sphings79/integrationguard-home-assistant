@@ -88,12 +88,23 @@ export interface RuntimeEntry {
   configuration_url: string;
   state: string;
   problem: boolean;
+  /** The entry the state and the reason belong to. */
   title: string;
+  /** The integration's own display name. */
+  name: string;
   full_name: string;
   reason: string;
   translation_key: string | null;
   since: string | null;
-  entries: { entry_id: string; title: string; state: string; reason: string }[];
+  entries: {
+    entry_id: string;
+    title: string;
+    state: string;
+    reason: string;
+    since?: string;
+  }[];
+  /** Ids of the entries that make up the problem. */
+  affected: string[];
   repairs: RepairIssue[];
 }
 
