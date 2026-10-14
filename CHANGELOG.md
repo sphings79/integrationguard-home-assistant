@@ -6,6 +6,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-10-17
+
+### Fixed
+
+- **The sidebar entry stayed after the integration was disabled.** The
+  panel is now removed when the integration is unloaded, not only when it
+  is deleted, and comes back when it is enabled again.
+
 ## [0.1.9] - 2026-09-26
 
 ### Fixed
@@ -219,7 +227,8 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.10
 [0.1.9]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.9
 [0.1.8]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.8
 [0.1.7]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.7
