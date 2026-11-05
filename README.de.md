@@ -7,7 +7,7 @@
 
   Liest denselben öffentlichen Store-Index, den [HACS](https://hacs.xyz) selbst verwendet, nimmt deine Dashboards und Config-Entries dazu und sagt dir, wo du hinschauen solltest.
 
-  <img src="https://img.shields.io/badge/HACS-Custom-41BDF5?style=for-the-badge" alt="Über HACS als Custom Repository verfügbar">
+  <a href="https://my.home-assistant.io/redirect/marketplace_browse/"><img src="https://img.shields.io/badge/Marketplace-Custom-41BDF5?style=for-the-badge" alt="Über den Marketplace als Custom Repository verfügbar"></a>
   <img src="https://img.shields.io/github/v/release/sphings79/integrationguard-home-assistant?style=for-the-badge" alt="Neuestes Release">
   <img src="https://img.shields.io/badge/Home%20Assistant-2026.1.0%2B-41BDF5?style=for-the-badge" alt="Benötigt Home Assistant 2026.1.0 oder neuer">
   <img src="https://img.shields.io/badge/license-MIT-3ddc97?style=for-the-badge" alt="MIT-Lizenz">
@@ -142,7 +142,17 @@ keine Custom-Karte unterbringen.
 
 <img src="assets/install.svg" alt="Vier Installationsschritte: Repository in HACS eintragen, herunterladen, Home Assistant neu starten, dann die Integration hinzufügen und das Panel öffnen" width="100%">
 
-### Über HACS
+### Marketplace (Home Assistant 2026.11 und neuer)
+
+Home Assistant 2026.11 ersetzt HACS durch den eingebauten **Marketplace**. IntegrationGuard ist nicht im Standardkatalog, also füge es als benutzerdefiniertes Repository hinzu: unter **Einstellungen → Marketplace** `https://github.com/sphings79/integrationguard-home-assistant` hinzufügen (Kategorie **Integration**) und es dort installieren. Benutzerdefinierte Repositories setzen voraus, dass der Marketplace mit GitHub verbunden ist; beim ersten Mal fragt er danach.
+
+Du kannst auch diese Schaltfläche benutzen:
+
+[![Öffne deine Home-Assistant-Instanz und zeige dieses Repository im Marketplace an.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=sphings79&repository=integrationguard-home-assistant&category=integration)
+
+Starte Home Assistant neu, wenn eine Reparaturmeldung dich dazu auffordert.
+
+### HACS (Home Assistant 2026.10 und älter)
 
 1. HACS → die drei Punkte → **Benutzerdefinierte Repositories**
 2. URL `https://github.com/sphings79/integrationguard-home-assistant`, Typ **Integration**

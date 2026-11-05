@@ -7,7 +7,7 @@
 
   Reads the same public store index [HACS](https://hacs.xyz) itself uses, adds your dashboards and config entries, and tells you what to look at.
 
-  <img src="https://img.shields.io/badge/HACS-Custom-41BDF5?style=for-the-badge" alt="Available through HACS as a custom repository">
+  <a href="https://my.home-assistant.io/redirect/marketplace_browse/"><img src="https://img.shields.io/badge/Marketplace-Custom-41BDF5?style=for-the-badge" alt="Available through the Marketplace as a custom repository"></a>
   <img src="https://img.shields.io/github/v/release/sphings79/integrationguard-home-assistant?style=for-the-badge" alt="Latest release">
   <img src="https://img.shields.io/badge/Home%20Assistant-2026.1.0%2B-41BDF5?style=for-the-badge" alt="Requires Home Assistant 2026.1.0 or newer">
   <img src="https://img.shields.io/badge/license-MIT-3ddc97?style=for-the-badge" alt="MIT licensed">
@@ -137,7 +137,17 @@ custom card in it.
 
 <img src="assets/install.svg" alt="Four installation steps: add the repository to HACS, download it, restart Home Assistant, then add the integration and open the panel" width="100%">
 
-### Through HACS
+### Marketplace (Home Assistant 2026.11 and newer)
+
+Home Assistant 2026.11 replaces HACS with the built-in **Marketplace**. IntegrationGuard is not in the default catalog, so add it as a custom repository: in **Settings → Marketplace**, add `https://github.com/sphings79/integrationguard-home-assistant` (category **Integration**), then install it from there. Custom repositories need the Marketplace to be connected to GitHub, and it asks you to connect the first time.
+
+You can also use this button:
+
+[![Open your Home Assistant instance and open this repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=sphings79&repository=integrationguard-home-assistant&category=integration)
+
+Restart Home Assistant if a repair asks you to.
+
+### HACS (Home Assistant 2026.10 and older)
 
 1. HACS → the three dots → **Custom repositories**
 2. URL `https://github.com/sphings79/integrationguard-home-assistant`, type **Integration**
