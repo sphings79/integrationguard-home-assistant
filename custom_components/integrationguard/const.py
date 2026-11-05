@@ -23,6 +23,8 @@ EVENT_RUNTIME_CHANGED: Final = f"{DOMAIN}_runtime_changed"
 
 # The integration HACS itself registers under.
 HACS_DOMAIN: Final = "hacs"
+# The built-in replacement for HACS, Home Assistant 2026.11 and newer.
+MARKETPLACE_DOMAIN: Final = "marketplace"
 # Apps (formerly add-ons) live behind the Supervisor, which registers here.
 HASSIO_DOMAIN: Final = "hassio"
 

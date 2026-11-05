@@ -329,7 +329,8 @@ class IntegrationGuardCoordinator:
         infos = hacs_source.async_installed_repositories(self.hass)
         if infos is None:
             _LOGGER.warning(
-                "HACS is not available, IntegrationGuard has nothing to look at"
+                "Neither the Marketplace nor HACS is available, "
+                "IntegrationGuard has nothing to look at"
             )
             if self.result is not None:
                 # Keep the last picture rather than replacing it with an empty

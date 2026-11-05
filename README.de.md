@@ -88,7 +88,9 @@ erste `sensor.integrationguard_score`.
 
 Vier Quellen, in dieser Reihenfolge:
 
-1. **HACS im laufenden Prozess.** Alles, was HACS heruntergeladen hat, auch die
+1. **Marketplace oder HACS im laufenden Prozess.** Home Assistant 2026.11 und
+   neuer ersetzen HACS durch den eingebauten Marketplace, ältere Versionen
+   nutzen HACS; beide werden gleich gelesen. Alles, was heruntergeladen wurde, auch die
    Custom Repositories, die in keinem Store stehen. Auf einer gewachsenen
    Instanz ist das ein Viertel von allem.
 2. **Der öffentliche HACS-Store-Index** unter `data-v2.hacs.xyz` — dieselben
@@ -336,8 +338,9 @@ Die Karte hat einen grafischen Editor, tippen musst du davon nichts.
 ## Fehlerbehebung
 
 **Alles leer, und die letzte Prüfung meldet `hacs: unavailable`.**
-HACS ist nicht geladen. IntegrationGuard liest die Repositories aus der
-laufenden HACS-Instanz; ohne sie gibt es nichts anzusehen. Das vorherige
+Weder der Marketplace noch HACS ist geladen. IntegrationGuard liest die
+Repositories aus der laufenden Instanz von einem der beiden; ohne sie gibt es
+nichts anzusehen. Das vorherige
 Ergebnis bleibt stehen, statt durch ein leeres ersetzt zu werden.
 
 **Repositories melden dauernd „warten auf GitHub".**
@@ -375,11 +378,12 @@ Nein. Ohne Token bekommst du 60 Anfragen pro Stunde, was für eine tägliche
 Prüfung reicht, sobald der erste Durchlauf durch ist. Mit Token sind es 5000,
 und der erste Durchlauf dauert Minuten statt Stunden.
 
-### Funktioniert es ohne HACS?
+### Funktioniert es ohne Marketplace bzw. HACS?
 
-Nein. Die Repository-Liste kommt aus HACS. Apps auf Home Assistant OS werden vom
+Nein. Die Repository-Liste kommt aus dem Marketplace (Home Assistant 2026.11
+und neuer) oder aus HACS (ältere Versionen). Apps auf Home Assistant OS werden vom
 Supervisor gelesen und würden auch allein funktionieren, aber die Integration ist
-darauf gebaut, dass HACS da ist.
+darauf gebaut, dass eines von beiden da ist.
 
 ### Löscht es irgendwas?
 
@@ -409,7 +413,7 @@ eine Weile. Ein ignoriertes Repository zählt nirgends mit.
 
 ## Was es bewusst nicht macht
 
-- **Kein Aktualisieren.** Das ist HACS' Aufgabe.
+- **Kein Aktualisieren.** Das ist Aufgabe des Marketplace bzw. von HACS.
 - **Kein Deinstallieren.** Es zeigt an, es räumt nicht auf.
 - **Keine Bewertung von Core-Integrationen.** Zustand und Nutzung gibt es nur
   für das, was über HACS kam, plus Apps. Ob eine Core-Integration läuft, wird
@@ -421,7 +425,7 @@ eine Weile. Ein ignoriertes Repository zählt nirgends mit.
 
 **[HACS](https://hacs.xyz)** von [Joakim Sørensen](https://github.com/ludeeus)
 und den Mitwirkenden. IntegrationGuard liest die Repositories aus der laufenden
-HACS-Instanz und nutzt den öffentlichen Store-Index unter `data-v2.hacs.xyz` —
+Marketplace- bzw. HACS-Instanz und nutzt den öffentlichen Store-Index unter `data-v2.hacs.xyz` —
 dieselben Daten, die HACS selbst holt. Quellcode:
 [hacs/integration](https://github.com/hacs/integration). HACS ist freie Software
 und nimmt [Spenden](https://github.com/sponsors/ludeeus) entgegen.
