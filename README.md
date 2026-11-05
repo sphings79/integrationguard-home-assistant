@@ -86,8 +86,10 @@ Entity ids follow the interface language: a German installation gets
 
 Four sources, in this order:
 
-1. **HACS in the running process.** Everything HACS downloaded, including the
-   custom repositories that are in no store. On a typical installation that is a
+1. **The Marketplace or HACS in the running process.** Everything it
+   downloaded, including the custom repositories that are in no store. Home
+   Assistant 2026.11 and newer replace HACS with the built-in Marketplace;
+   older versions use HACS. Both are read the same way. On a typical installation that is a
    quarter of everything you have.
 2. **The public HACS store index** at `data-v2.hacs.xyz` — the same data your
    HACS already fetches. No token, no account, and a conditional request costs
@@ -137,9 +139,11 @@ custom card in it.
 
 <img src="assets/install.svg" alt="Four installation steps: add the repository to HACS, download it, restart Home Assistant, then add the integration and open the panel" width="100%">
 
-### Through HACS
+### Through the Marketplace or HACS
 
-1. HACS → the three dots → **Custom repositories**
+1. Marketplace (Home Assistant 2026.11 and newer): Settings → **Marketplace** →
+   the three dots → **Custom repositories**. HACS: HACS → the three dots →
+   **Custom repositories**
 2. URL `https://github.com/sphings79/integrationguard-home-assistant`, type **Integration**
 3. Search for **IntegrationGuard** and download it
 4. Restart Home Assistant
@@ -318,8 +322,9 @@ The card has a visual editor, so none of this has to be typed.
 ## Troubleshooting
 
 **Everything is empty and the last scan reports `hacs: unavailable`.**
-HACS is not loaded. IntegrationGuard reads the repositories out of the running
-HACS instance; without it there is nothing to look at. The previous result is
+Neither the Marketplace nor HACS is loaded. IntegrationGuard reads the
+repositories out of the running instance of one of them; without it there is
+nothing to look at. The previous result is
 kept rather than replaced with an empty one.
 
 **Repositories keep saying "waiting for GitHub".**
@@ -357,9 +362,10 @@ take minutes instead of hours.
 
 ### Does it work without HACS?
 
-No. The repository list comes from HACS. Apps on Home Assistant OS are read from
-the Supervisor and would work on their own, but the integration is built around
-HACS being there.
+Not without the Marketplace either. The repository list comes from the
+Marketplace (Home Assistant 2026.11 and newer) or from HACS (older versions).
+Apps on Home Assistant OS are read from the Supervisor and would work on their
+own, but the integration is built around one of the two being there.
 
 ### Will it delete anything?
 
@@ -389,7 +395,7 @@ only for a while. An ignored repository counts towards nothing.
 
 ## What it deliberately does not do
 
-- **No updating.** That is HACS' job.
+- **No updating.** That is the job of the Marketplace or HACS.
 - **No uninstalling.** It shows, it does not clean up.
 - **No judging core integrations.** Health and usage only cover what came
   through HACS, plus apps. Whether a core integration runs is watched, though.
@@ -401,7 +407,7 @@ only for a while. An ignored repository counts towards nothing.
 
 **[HACS](https://hacs.xyz)** by [Joakim Sørensen](https://github.com/ludeeus)
 and its contributors. IntegrationGuard reads the repositories out of the running
-HACS instance and uses the public store index at `data-v2.hacs.xyz` — the same
+Marketplace or HACS instance and uses the public store index at `data-v2.hacs.xyz` — the same
 data HACS itself fetches. Source: [hacs/integration](https://github.com/hacs/integration).
 HACS is free software and takes [donations](https://github.com/sponsors/ludeeus).
 

@@ -6,6 +6,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Home Assistant 2026.11: the repository list was empty.** The built-in
+  Marketplace replaces HACS and no longer registers `hass.data["hacs"]`.
+  IntegrationGuard now reads the installed repositories from the Marketplace
+  and still falls back to HACS on older versions. The store index
+  (`data-v2.hacs.xyz`) is unchanged.
+
 ## [0.1.10] - 2026-10-17
 
 ### Fixed

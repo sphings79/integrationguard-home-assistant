@@ -1,9 +1,11 @@
-"""Reads the installed repositories out of the running HACS instance.
+"""Reads the installed repositories out of the running HACS or Marketplace.
 
-This is private API: HACS puts its ``HacsBase`` into ``hass.data["hacs"]`` and
-exposes the repositories as objects. Nothing here may raise because of a
-renamed attribute, so every access goes through ``getattr`` and a missing value
-becomes "unknown" rather than an error.
+This is private API. Before Home Assistant 2026.11 HACS puts its ``HacsBase``
+into ``hass.data["hacs"]``. From 2026.11 on the built-in Marketplace replaces
+HACS and keeps its manager in the ``runtime_data`` of its config entry. Both
+expose the repositories as objects of the same shape. Nothing here may raise
+because of a renamed attribute, so every access goes through ``getattr`` and a
+missing value becomes "unknown" rather than an error.
 """
 
 from __future__ import annotations
@@ -12,10 +14,11 @@ from datetime import datetime
 import logging
 from typing import Any
 
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.util import dt as dt_util
 
-from ..const import HACS_DOMAIN, Category
+from ..const import HACS_DOMAIN, MARKETPLACE_DOMAIN, Category
 from ..models import RepositoryInfo
 
 _LOGGER = logging.getLogger(__name__)
@@ -43,20 +46,43 @@ def _get(obj: Any, name: str, default: Any = None) -> Any:
     return default if value is None else value
 
 
+def _manager(hass: HomeAssistant) -> Any | None:
+    """Return the Marketplace manager, or the HACS instance, or None."""
+    for entry in hass.config_entries.async_entries(MARKETPLACE_DOMAIN):
+        if entry.state is not ConfigEntryState.LOADED:
+            continue
+        manager = _get(entry, "runtime_data")
+        if manager is not None:
+            return manager
+    return hass.data.get(HACS_DOMAIN)
+
+
 def async_is_available(hass: HomeAssistant) -> bool:
-    """Return whether HACS is loaded and usable."""
-    return hass.data.get(HACS_DOMAIN) is not None
+    """Return whether the Marketplace or HACS is loaded and usable."""
+    return _manager(hass) is not None
+
+
+def _downloaded(registry: Any) -> list[Any]:
+    """Return the installed repositories of either spelling of the registry."""
+    # The Marketplace calls it ``list_installed``, HACS ``list_downloaded``.
+    for name in ("list_installed", "list_downloaded"):
+        if not hasattr(registry, name):
+            continue
+        value = getattr(registry, name)
+        # Older HACS exposed this as a method rather than a property.
+        return list(value() if callable(value) else value)
+    raise AttributeError("no list of installed repositories")
 
 
 def async_installed_repositories(
     hass: HomeAssistant,
 ) -> list[RepositoryInfo] | None:
-    """Return every repository HACS has downloaded.
+    """Return every repository the Marketplace or HACS has downloaded.
 
-    Returns ``None`` when HACS is not available at all, which is different from
+    Returns ``None`` when neither is available at all, which is different from
     an empty list.
     """
-    hacs = hass.data.get(HACS_DOMAIN)
+    hacs = _manager(hass)
     if hacs is None:
         return None
 
@@ -66,10 +92,7 @@ def async_installed_repositories(
         return None
 
     try:
-        downloaded = list(registry.list_downloaded)
-    except TypeError:
-        # Older HACS exposed this as a method rather than a property.
-        downloaded = list(registry.list_downloaded())
+        downloaded = _downloaded(registry)
     except Exception:
         _LOGGER.exception("Could not read the downloaded repositories from HACS")
         return None
