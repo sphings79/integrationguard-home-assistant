@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-11-10
+
 ### Fixed
 
 - **Home Assistant 2026.11: the repository list was empty.** The built-in
@@ -235,7 +237,8 @@ First release.
 - Eleven languages: English, German, Dutch, French, Spanish, Italian,
   Portuguese, Polish, Swedish, Danish and Czech.
 
-[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/sphings79/integrationguard-home-assistant/compare/v0.1.11...HEAD
+[0.1.11]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.11
 [0.1.10]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.10
 [0.1.9]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.9
 [0.1.8]: https://github.com/sphings79/integrationguard-home-assistant/releases/tag/v0.1.8
